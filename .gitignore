@@ -1,0 +1,39 @@
+# Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+staticfiles/
+media/
+
+# Entornos
+venv/
+.env
+.env.*
+!.env.example
+
+# Respaldos de base de datos (nunca al repositorio)
+backups/
+*.dump
+
+# Uploads de usuarios (evidencias, fotos): no versionar, pero conservar la carpeta
+static/uploads/evidence/*
+!static/uploads/evidence/.gitkeep
+
+# Pruebas y reportes
+.pytest_cache/
+.coverage
+htmlcov/
+reports/
+test-results/
+playwright-report/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+
+# Migraciones generadas localmente se versionan, pero sin basura
+*.log

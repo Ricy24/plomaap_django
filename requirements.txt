@@ -1,0 +1,19 @@
+# Dependencias de ejecución verificadas en el entorno actual
+# Python 3.12+ / Django 6.1.2
+# Instalar: pip install -r requirements.txt
+
+Django==6.1.2
+python-dotenv==1.2.4
+django-cors-headers==4.9.0
+PyJWT==2.15.1
+bcrypt==5.0.0
+requests==2.34.2
+google-auth==2.62.0
+google-auth-oauthlib==1.5.0
+google-auth-httplib2==0.4.4
+cryptography==50.0.2
+pgvector==0.5.1
+psycopg2-binary==2.9.13
+PyMySQL==1.2.3
+webauthn==3.0.1
+tzdata==2026.5

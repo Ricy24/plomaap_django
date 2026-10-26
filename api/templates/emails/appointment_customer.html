@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Tu servicio en PlomApp está confirmado!</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F7F9FC; color: #1C2B41; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    .wrapper { width: 100%; max-width: 580px; margin: 0 auto; padding: 24px 16px; box-sizing: border-box; }
+    .card { background: #FFFFFF; border-radius: 20px; padding: 32px 28px; box-shadow: 0 4px 20px rgba(15, 82, 186, 0.08); border: 1px solid #E2E8F0; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .badge-icon { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: #E6F7F4; border-radius: 50%; color: #00C9A7; font-size: 32px; font-weight: bold; margin-bottom: 12px; }
+    h1 { font-size: 22px; font-weight: 800; color: #0F52BA; margin: 0 0 6px 0; letter-spacing: -0.3px; }
+    p.subtitle { font-size: 14px; color: #5B6C83; margin: 0; }
+    .info-box { background: #F0F4F8; border-radius: 14px; padding: 20px; margin: 24px 0; border-left: 4px solid #0F52BA; }
+    .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-label { color: #5B6C83; font-weight: 600; }
+    .info-value { color: #1C2B41; font-weight: 700; text-align: right; }
+    .tech-card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; margin-top: 16px; display: flex; align-items: center; }
+    .tech-icon { width: 40px; height: 40px; background: #0F52BA; color: #FFFFFF; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-right: 12px; }
+    .cta-button { display: block; width: 100%; text-align: center; background: #0F52BA; color: #FFFFFF; padding: 14px 0; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; margin: 24px 0 16px 0; }
+    .footer { text-align: center; font-size: 11px; color: #65758B; margin-top: 24px; }
+    .tag { display: inline-block; background: #00C9A7; color: #FFFFFF; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="header">
+        <div class="badge-icon">&#10003;</div>
+        <h1>¡Tu servicio está confirmado!</h1>
+        <p class="subtitle">Hola <strong>{{ name }}</strong>, coordinamos todo para tu visita técnica.</p>
+      </div>
+
+      <div class="info-box">
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr>
+            <td class="info-label" align="left">Reserva ID</td>
+            <td class="info-value" align="right"><span class="tag">{{ booking_id }}</span></td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Servicio</td>
+            <td class="info-value" align="right">{{ service_name }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Fecha</td>
+            <td class="info-value" align="right">{{ appointment_date }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Hora estimada</td>
+            <td class="info-value" align="right">{{ appointment_time }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Duración aprox.</td>
+            <td class="info-value" align="right">{{ duration }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Tarifa base</td>
+            <td class="info-value" align="right" style="color: #0F52BA;">{{ service_price }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Ubicación</td>
+            <td class="info-value" align="right">{{ address }}</td>
+          </tr>
+          {% if address_reference %}
+          <tr>
+            <td class="info-label" align="left">Referencia</td>
+            <td class="info-value" align="right">{{ address_reference }}</td>
+          </tr>
+          {% endif %}
+        </table>
+      </div>
+
+      <div style="background: #FAFBFD; border: 1px solid #E2E8F0; border-radius: 12px; padding: 14px; margin-top: 14px;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="42" valign="middle">
+              <div style="width: 36px; height: 36px; background: #0F52BA; color: #FFF; border-radius: 50%; text-align: center; line-height: 36px; font-weight: bold;">&#9881;</div>
+            </td>
+            <td valign="middle" style="padding-left: 10px;">
+              <div style="font-size: 13px; font-weight: bold; color: #1C2B41;">Profesional asignado: {{ technician_name }}</div>
+              <div style="font-size: 11px; color: #5B6C83;">Calificación: &#9733; {{ technician_rating }} &middot; Técnico Verificado PlomApp</div>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      {% if notes %}
+      <p style="font-size: 12px; color: #5B6C83; margin-top: 16px; background: #F8FAFC; padding: 10px; border-radius: 8px;">
+        <strong>Observaciones:</strong> {{ notes }}
+      </p>
+      {% endif %}
+
+      <p style="font-size: 12px; color: #5B6C83; text-align: center; margin-top: 20px;">
+        Puedes gestionar, reprogramar o ver el seguimiento de tu cita directamente desde la aplicación de PlomApp.
+      </p>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2026 PlomApp. Servicios profesionales bajo demanda con garantía.</p>
+      <p>Soporte 24/7 &middot; Bogotá, Colombia</p>
+    </div>
+  </div>
+</body>
+</html>

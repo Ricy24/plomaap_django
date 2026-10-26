@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva cita asignada - PlomApp</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #F7F9FC; color: #1C2B41; margin: 0; padding: 0; }
+    .wrapper { width: 100%; max-width: 580px; margin: 0 auto; padding: 24px 16px; box-sizing: border-box; }
+    .card { background: #FFFFFF; border-radius: 20px; padding: 32px 28px; box-shadow: 0 4px 20px rgba(15, 82, 186, 0.08); border: 1px solid #E2E8F0; }
+    h1 { font-size: 20px; font-weight: 800; color: #0F52BA; margin: 0 0 6px 0; }
+    .info-box { background: #F0F4F8; border-radius: 14px; padding: 18px; margin: 20px 0; }
+    .info-label { color: #5B6C83; font-weight: 600; font-size: 12px; }
+    .info-value { color: #1C2B41; font-weight: 700; font-size: 13px; }
+    .footer { text-align: center; font-size: 11px; color: #65758B; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <h1>¡Nueva cita asignada!</h1>
+      <p style="font-size: 14px; color: #5B6C83;">Hola <strong>{{ name }}</strong>, tienes un nuevo servicio programado en PlomApp.</p>
+
+      <div class="info-box">
+        <table width="100%" cellpadding="4" cellspacing="0">
+          <tr>
+            <td class="info-label" align="left">ID Cita</td>
+            <td class="info-value" align="right">{{ booking_id }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Servicio</td>
+            <td class="info-value" align="right">{{ service_name }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Fecha</td>
+            <td class="info-value" align="right">{{ appointment_date }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Hora</td>
+            <td class="info-value" align="right">{{ appointment_time }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Cliente</td>
+            <td class="info-value" align="right">{{ customer_name }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Teléfono</td>
+            <td class="info-value" align="right">{{ customer_phone }}</td>
+          </tr>
+          <tr>
+            <td class="info-label" align="left">Dirección</td>
+            <td class="info-value" align="right">{{ customer_address }}</td>
+          </tr>
+          {% if customer_reference %}
+          <tr>
+            <td class="info-label" align="left">Referencia</td>
+            <td class="info-value" align="right">{{ customer_reference }}</td>
+          </tr>
+          {% endif %}
+        </table>
+      </div>
+
+      {% if notes %}
+      <p style="font-size: 12px; color: #5B6C83; background: #FAFBFD; padding: 10px; border-radius: 8px; border: 1px solid #E2E8F0;">
+        <strong>Detalles del cliente:</strong> {{ notes }}
+      </p>
+      {% endif %}
+
+      <p style="font-size: 12px; color: #0F52BA; font-weight: bold; text-align: center; margin-top: 18px;">
+        Por favor preséntate puntual y con tu equipo de seguridad e identificación.
+      </p>
+    </div>
+    <div class="footer">&copy; 2026 PlomApp &middot; Panel de Técnicos</div>
+  </div>
+</body>
+</html>

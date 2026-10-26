@@ -1,0 +1,47 @@
+# PostgreSQL 17 + pgvector para PlomApp
+#
+# Este archivo reproduce el contenedor que usa el backend Django en desarrollo:
+#   - nombre : plomapp-postgres-pgvector
+#   - puerto : localhost:5434  ->  5432 del contenedor
+#   - volumen: plomapp_pgvector_data (datos persistentes)
+#
+# Primera vez (solo si el volumen no existe):
+#   docker volume create plomapp_pgvector_data
+#
+# La base de datos `plomapp` se crea una sola vez dentro del contenedor:
+#   docker exec -it plomapp-postgres-pgvector createdb -U postgres plomapp
+#   docker exec -it plomapp-postgres-pgvector psql -U postgres -d plomapp \
+#       -c "CREATE EXTENSION IF NOT EXISTS vector;"
+#   (después, restaurar el respaldo: ver README > Base de datos)
+#
+# Uso:
+#   docker compose up -d
+#
+# Nota: si ya existe el contenedor creado a mano (caso actual), NO ejecutes
+# `docker compose up` sin antes retirarlo; sus datos viven en el volumen y no
+# se pierden:
+#   docker rm -f plomapp-postgres-pgvector
+#   docker compose up -d
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    container_name: plomapp-postgres-pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      POSTGRES_DB: ${POSTGRES_DB:-plomapp}
+    ports:
+      - "5434:5432"
+    volumes:
+      - plomapp_pgvector_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-plomapp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  plomapp_pgvector_data:
+    external: true
