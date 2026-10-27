@@ -6,7 +6,43 @@ live PostgreSQL/MySQL:
 
     python manage.py test api
 """
+from unittest import TestCase as UnitTestCase
+
 from django.test import TestCase
+
+
+class ValidatorUnitTests(UnitTestCase):
+    """Pruebas unitarias de validadores puros, sin base de datos."""
+
+    def test_validate_email_accepts_valid_address(self):
+        from api.utils.validators import validate_email
+
+        self.assertTrue(validate_email('persona@example.com'))
+
+    def test_validate_email_rejects_invalid_address(self):
+        from api.utils.validators import validate_email
+
+        self.assertFalse(validate_email('persona@'))
+
+    def test_validate_password_accepts_minimum_length(self):
+        from api.utils.validators import validate_password
+
+        self.assertTrue(validate_password('12345678'))
+
+    def test_validate_password_rejects_short_password(self):
+        from api.utils.validators import validate_password
+
+        self.assertFalse(validate_password('1234567'))
+
+    def test_validate_date_time_accepts_valid_values(self):
+        from api.utils.validators import validate_date_time
+
+        self.assertTrue(validate_date_time('2026-10-27', '14:30'))
+
+    def test_validate_date_time_rejects_invalid_values(self):
+        from api.utils.validators import validate_date_time
+
+        self.assertFalse(validate_date_time('2026-02-30', '14:30'))
 
 
 class ApiContractTests(TestCase):
