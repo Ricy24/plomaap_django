@@ -126,6 +126,9 @@ El backend escucha en el **puerto 5000**, igual que Flask (el frontend asume
 # Unitarias (SQLite en memoria)
 .\venv\Scripts\python.exe -m pytest -m unit -q
 
+# Entrega del equipo: 10 pruebas por integrante (40 en total)
+.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
+
 # Cobertura de la capa unitaria (api/utils + api/services)
 .\venv\Scripts\python.exe -m coverage erase
 .\venv\Scripts\python.exe -m coverage run --source=api/utils,api/services -m pytest -m unit -q
@@ -142,7 +145,8 @@ Remove-Item Env:TEST_USE_CONFIGURED_DB
 
 Resultado real de la suite unitaria:
 
-- **470 casos aprobados** (323 funciones de prueba, varias parametrizadas).
+- **510 casos aprobados** (363 funciones de prueba, varias parametrizadas):
+  470 de regresión + **40 de la entrega por integrantes**.
 - **100 % de cobertura** sobre `api/utils` + `api/services`: 1243 sentencias,
   0 sin cubrir.
 - Red, SMTP, Gemini y Voyage están simulados con `unittest.mock`; los servicios
@@ -164,6 +168,11 @@ Las pruebas están separadas por módulo, no en un solo archivo:
 
 ```
 api/tests/unit/
+  equipo/                        # entrega: 10 pruebas por integrante
+    test_integrante_1_validaciones.py
+    test_integrante_2_seguridad.py
+    test_integrante_3_citas.py
+    test_integrante_4_datos.py
   utils/                         # una función por archivo
     test_validators_email.py
     test_validators_phone.py
@@ -191,6 +200,12 @@ api/tests/unit/
 El detalle de cada caso está en la hoja **Pruebas Unitarias** del Excel
 [`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx)
 (casos `UNIT-001` a `UNIT-470`, uno por variante realmente ejecutada).
+La división de las 40 pruebas de la entrega (10 por integrante) está en
+[`docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md`](docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md)
+y en la copia
+[`Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx),
+que contiene únicamente esas 40 pruebas (`UNIT-001` a `UNIT-040`) sin modificar
+el original de 470 casos.
 Ver [`TESTING.md`](TESTING.md) para los comandos y la matriz completa.
 
 ## Estructura

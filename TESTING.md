@@ -17,8 +17,9 @@ Gemini y SMTP se simulan con `unittest.mock`.
 .\venv\Scripts\python.exe -m pytest -m unit -q
 ```
 
-Resultado real: **470 casos aprobados** (323 funciones de prueba; varias están
-parametrizadas), **18 casos de integración deseleccionados**.
+Resultado real: **510 casos aprobados** (363 funciones de prueba; varias están
+parametrizadas), **18 casos de integración deseleccionados**. Incluye los 470
+casos de regresión y las **40 pruebas de la entrega por integrantes**.
 
 ### Cobertura
 
@@ -43,6 +44,11 @@ api/tests/
   factories.py                    fábricas de usuarios, técnicos, servicios, citas,
                                   hogares, catálogos, eventos y embeddings
   unit/
+    equipo/                       entrega del equipo: 10 pruebas por integrante
+      test_integrante_1_validaciones.py
+      test_integrante_2_seguridad.py
+      test_integrante_3_citas.py
+      test_integrante_4_datos.py
     utils/                        una función/helper por archivo
       test_validators_email.py
       test_validators_phone.py
@@ -73,7 +79,22 @@ config/settings_test.py           SQLite por defecto; Postgres con TEST_USE_CONF
 Cada fila de la hoja **Pruebas Unitarias** del Excel
 (`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`) corresponde a una variante
 realmente ejecutada, con el nodo de pytest como evidencia (`UNIT-001` a
-`UNIT-470`).
+`UNIT-470`). Las 40 pruebas de `unit/equipo/` son la entrega identificable de
+los 4 integrantes y están detalladas en
+[`docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md`](docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md).
+La copia con esas 40 pruebas (`UNIT-001` a `UNIT-040`) es
+`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx`; contiene
+solo la entrega del equipo, mientras que el archivo original conserva los 470
+casos de regresión sin cambios.
+
+### Entrega por integrantes
+
+```powershell
+.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
+```
+
+Resultado real: **40 passed**. Cada archivo contiene exactamente 10 pruebas y
+se puede ejecutar por separado para la evidencia individual.
 
 ## Pruebas de integración
 
