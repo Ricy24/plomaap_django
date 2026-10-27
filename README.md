@@ -123,11 +123,20 @@ El backend escucha en el **puerto 5000**, igual que Flask (el frontend asume
 ## Tests
 
 ```powershell
-python manage.py test api
+# Unitarias (SQLite en memoria)
+.\venv\Scripts\python.exe -m pytest -m unit -q
+
+# Integración contra PostgreSQL/pgvector de .env (crea test_plomapp)
+$env:TEST_USE_CONFIGURED_DB = '1'
+.\venv\Scripts\python.exe -m pytest -m integration -q --create-db
+Remove-Item Env:TEST_USE_CONFIGURED_DB
+
+# Suite completa
+.\venv\Scripts\python.exe -m pytest -q
 ```
 
-Corren en SQLite en memoria. Usa `TEST_USE_CONFIGURED_DB=1` para probar
-contra la base configurada (creará `test_plomapp`).
+Los casos conservan los IDs del plan SENA (`UNIT-01`, `INT-01`, etc.). Ver
+[`TESTING.md`](TESTING.md) para el detalle y la matriz de pruebas.
 
 ## Estructura
 
@@ -145,7 +154,7 @@ api/
   templates/emails Plantillas de correo (Django templates)
   middleware.py    JSON para errores (400/401/403/404/500)
   errors.py        handlers de error
-  tests.py         tests de contrato (port de tests/test_api_contract.py)
+  tests/           unit/ + integration/ (pytest; IDs UNIT-01..INT-04)
 static/uploads/    fotos de evidencia subidas (se sirven en /static/uploads/…)
 docker-compose.yml PostgreSQL 17 + pgvector (reproducción del contenedor)
 ```
