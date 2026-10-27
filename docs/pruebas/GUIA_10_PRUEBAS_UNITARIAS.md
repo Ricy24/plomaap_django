@@ -14,6 +14,9 @@ que reciben un dato y devuelven `True` o `False`.
 api/tests/unit/test_unit_10_basicas.py
 ```
 
+En el Excel están en la hoja **Pruebas Unitarias**, como `UNIT-01` a
+`UNIT-10`.
+
 ## ¿Cómo se ejecutan?
 
 ```powershell

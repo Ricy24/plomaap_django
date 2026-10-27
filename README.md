@@ -153,13 +153,13 @@ Resultado real: **`10 passed`**.
 
 La guía de estudio está en
 [`docs/pruebas/GUIA_10_PRUEBAS_UNITARIAS.md`](docs/pruebas/GUIA_10_PRUEBAS_UNITARIAS.md)
-y el detalle está en la hoja **Unitarias Basicas** del Excel
+y el detalle está en la hoja **Pruebas Unitarias** del Excel
 [`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx)
-(casos `UNIT-B01` a `UNIT-B10`).
+(casos `UNIT-01` a `UNIT-10`).
 
-> Estas 10 pruebas son un anexo para la entrega del aprendiz. No reemplazan los
-> casos `UNIT-01` a `UNIT-05` del plan SENA ni modifican el resumen general de
-> 12 casos del Excel.
+> Estas 10 pruebas son las que quedaron registradas en la hoja **Pruebas
+> Unitarias** del Excel. La suite completa del proyecto conserva además las
+> demás pruebas unitarias, de integración y de contrato.
 
 ## Estructura
 

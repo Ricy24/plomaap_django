@@ -16,12 +16,19 @@ integración. Los nombres de archivo y de prueba conservan el ID del plan SENA
 .\venv\Scripts\python.exe -m pytest -m unit -q
 ```
 
-Corren en SQLite en memoria y no requieren Docker. Incluyen:
+Corren en SQLite en memoria y no requieren Docker. La suite completa incluye
+las pruebas de validadores, JWT, disponibilidad de citas y embeddings.
 
-- `UNIT-01`: validadores de registro.
-- `UNIT-02`: JWT HS256, `sub` como string, expiración y firma alterada.
-- `UNIT-03`: slots de disponibilidad y transiciones de estado.
-- `UNIT-04`: parseo de vectores y similitud coseno.
+Para la entrega del aprendiz hay un archivo aparte con **10 pruebas unitarias
+básicas** sobre `api/utils/validators.py`:
+
+```powershell
+.\venv\Scripts\python.exe -m pytest api\tests\unit\test_unit_10_basicas.py -v
+```
+
+El Excel documenta esas 10 pruebas en la hoja **Pruebas Unitarias** como
+`UNIT-01` a `UNIT-10`. La suite completa del repositorio conserva además las
+demás pruebas unitarias y de integración.
 
 ## Pruebas de integración
 
