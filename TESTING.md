@@ -91,6 +91,38 @@ Django crea y destruye `test_plomapp`; **no** usa la base `plomapp` real. La
 prueba `INT-03` crea la extensión `vector`, convierte la columna de embeddings a
 `vector(512)` y crea el índice HNSW dentro de la base de pruebas.
 
+### Contenedor desechable (prueba satisfactoria)
+
+Para demostrar la integración sin tocar el contenedor real se puede levantar un
+PostgreSQL 17 + pgvector temporal, ejecutar la suite y destruirlo al final:
+
+```powershell
+docker run -d --name plomapp-test-pgvector `
+  -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=plomaap_test_pw `
+  -e POSTGRES_DB=plomapp_test -p 5435:5432 pgvector/pgvector:pg17
+
+$env:TEST_USE_CONFIGURED_DB = '1'
+$env:POSTGRES_DB = 'plomapp_test'
+$env:POSTGRES_USER = 'postgres'
+$env:POSTGRES_PASSWORD = 'plomaap_test_pw'
+$env:POSTGRES_HOST = 'localhost'
+$env:POSTGRES_PORT = '5435'
+.\venv\Scripts\python.exe -m pytest api\tests\integration -q --create-db
+Remove-Item Env:TEST_USE_CONFIGURED_DB,Env:POSTGRES_DB,Env:POSTGRES_USER,Env:POSTGRES_PASSWORD,Env:POSTGRES_HOST,Env:POSTGRES_PORT
+
+docker rm -fv plomapp-test-pgvector
+```
+
+Resultado real del **27/10/2026**:
+
+- `pytest -m integration -q --create-db`: **8 passed** (incluye `INT-02` con
+  `select_for_update` e `INT-03` con `vector(512)` e índice HNSW).
+- `pytest api\tests\integration -q --create-db`: **18 passed** (integración +
+  contrato de API).
+- Django creó y destruyó `test_plomapp_test`; la base real `plomapp`
+  (`localhost:5434`) no se modificó. El contenedor temporal se eliminó con
+  `docker rm -fv` al finalizar.
+
 Casos:
 
 - `INT-01`: registro, login, perfil y rechazo de contraseña incorrecta.

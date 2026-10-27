@@ -148,6 +148,16 @@ Resultado real de la suite unitaria:
 - Red, SMTP, Gemini y Voyage están simulados con `unittest.mock`; los servicios
   que usan modelos corren sobre SQLite en memoria.
 
+Integración real con PostgreSQL + pgvector (contenedor desechable, 27/10/2026):
+
+- **8 pruebas de integración aprobadas**, incluidas `select_for_update` y
+  `vector(512)` con índice HNSW.
+- **18 pruebas aprobadas** al ejecutar todo `api/tests/integration` (integración
+  + contrato de API).
+- Django creó y destruyó `test_plomapp_test`; la base real no se tocó y el
+  contenedor temporal se eliminó al finalizar. Ver
+  [`TESTING.md`](TESTING.md#contenedor-desechable-prueba-satisfactoria).
+
 ### Organización de las pruebas unitarias
 
 Las pruebas están separadas por módulo, no en un solo archivo:
