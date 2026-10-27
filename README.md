@@ -138,6 +138,29 @@ Remove-Item Env:TEST_USE_CONFIGURED_DB
 Los casos conservan los IDs del plan SENA (`UNIT-01`, `INT-01`, etc.). Ver
 [`TESTING.md`](TESTING.md) para el detalle y la matriz de pruebas.
 
+### 10 pruebas unitarias básicas (entrega del aprendiz)
+
+Además de la suite completa, el archivo
+`api/tests/unit/test_unit_10_basicas.py` contiene **10 pruebas unitarias
+básicas** sobre `api/utils/validators.py`: email, teléfono, contraseña, nombre y
+fecha/hora. No usan base de datos, servidor ni internet.
+
+```powershell
+.\venv\Scripts\python.exe -m pytest api\tests\unit\test_unit_10_basicas.py -v
+```
+
+Resultado real: **`10 passed`**.
+
+La guía de estudio está en
+[`docs/pruebas/GUIA_10_PRUEBAS_UNITARIAS.md`](docs/pruebas/GUIA_10_PRUEBAS_UNITARIAS.md)
+y el detalle está en la hoja **Unitarias Basicas** del Excel
+[`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx)
+(casos `UNIT-B01` a `UNIT-B10`).
+
+> Estas 10 pruebas son un anexo para la entrega del aprendiz. No reemplazan los
+> casos `UNIT-01` a `UNIT-05` del plan SENA ni modifican el resumen general de
+> 12 casos del Excel.
+
 ## Estructura
 
 ```
