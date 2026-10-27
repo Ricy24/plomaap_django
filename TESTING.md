@@ -1,8 +1,9 @@
 # Pruebas del backend PlomApp
 
-El backend usa **pytest + pytest-django** para las pruebas unitarias y de
-integración. Los nombres de archivo y de prueba conservan el ID del plan SENA
-(`UNIT-01`, `INT-01`, etc.) para que la evidencia sea rastreable.
+El backend usa **pytest + pytest-django**. La suite unitaria está organizada por
+módulos (una función de utilidad o un servicio por archivo) y corre sobre
+**SQLite en memoria**, sin Docker ni servicios externos: las llamadas a Voyage,
+Gemini y SMTP se simulan con `unittest.mock`.
 
 ## Instalación
 
@@ -16,19 +17,63 @@ integración. Los nombres de archivo y de prueba conservan el ID del plan SENA
 .\venv\Scripts\python.exe -m pytest -m unit -q
 ```
 
-Corren en SQLite en memoria y no requieren Docker. La suite completa incluye
-las pruebas de validadores, JWT, disponibilidad de citas y embeddings.
+Resultado real: **470 casos aprobados** (323 funciones de prueba; varias están
+parametrizadas), **18 casos de integración deseleccionados**.
 
-Para la entrega del aprendiz hay un archivo aparte con **10 pruebas unitarias
-básicas** sobre `api/utils/validators.py`:
+### Cobertura
 
 ```powershell
-.\venv\Scripts\python.exe -m pytest api\tests\unit\test_unit_10_basicas.py -v
+.\venv\Scripts\python.exe -m coverage erase
+.\venv\Scripts\python.exe -m coverage run --source=api/utils,api/services -m pytest -m unit -q
+.\venv\Scripts\python.exe -m coverage report -m
 ```
 
-El Excel documenta esas 10 pruebas en la hoja **Pruebas Unitarias** como
-`UNIT-01` a `UNIT-10`. La suite completa del repositorio conserva además las
-demás pruebas unitarias y de integración.
+Resultado real: **100 %** sobre `api/utils` + `api/services` (1243 sentencias,
+0 sin cubrir).
+
+La cobertura se mide sobre la **capa unitaria** (`api/utils` y `api/services`).
+Las vistas y controladores (`api/views`, `api/controllers`) requieren pruebas de
+integración/API y no forman parte de este porcentaje.
+
+### Estructura
+
+```
+api/tests/
+  conftest.py                     fixtures compartidas
+  factories.py                    fábricas de usuarios, técnicos, servicios, citas,
+                                  hogares, catálogos, eventos y embeddings
+  unit/
+    utils/                        una función/helper por archivo
+      test_validators_email.py
+      test_validators_phone.py
+      test_validators_password.py
+      test_validators_name.py
+      test_validators_date_time.py
+      test_validators_catalogs.py
+      test_jwt_utils.py
+      test_request_utils.py
+      test_dispatch.py
+      test_decorators.py
+      test_email_utils.py
+    services/                     un servicio por archivo
+      test_appointment_service.py
+      test_embedding_provider.py
+      test_embedding_service.py
+      test_event_service.py
+      test_hybrid_search_service.py
+      test_nlu_service.py
+      test_onboarding_service.py
+      test_profile_service.py
+      test_recommendation_service.py
+  integration/                    INT-01 .. INT-04 + contrato existente
+pytest.ini                        configuración y marcadores (unit/integration/e2e)
+config/settings_test.py           SQLite por defecto; Postgres con TEST_USE_CONFIGURED_DB=1
+```
+
+Cada fila de la hoja **Pruebas Unitarias** del Excel
+(`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`) corresponde a una variante
+realmente ejecutada, con el nodo de pytest como evidencia (`UNIT-001` a
+`UNIT-470`).
 
 ## Pruebas de integración
 
@@ -61,24 +106,12 @@ Casos:
 .\venv\Scripts\python.exe -m pytest -q
 ```
 
-## Estructura
-
-```
-api/tests/
-  conftest.py                 fixtures compartidas
-  factories.py                factorías de usuarios, técnicos, servicios y citas
-  unit/                       UNIT-01 .. UNIT-04
-  integration/                INT-01 .. INT-04 + contrato existente
-pytest.ini                    configuración de pytest
-config/settings_test.py       SQLite por defecto; Postgres con TEST_USE_CONFIGURED_DB=1
-```
-
 ## Frontend
 
 Las pruebas del frontend viven en el repositorio React:
 
 ```powershell
-npm run test:unit      # Vitest (UNIT-05)
+npm run test:unit      # Vitest
 npm run test:e2e       # Playwright (E2E-01 .. E2E-03)
 ```
 

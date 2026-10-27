@@ -5,7 +5,22 @@ from datetime import date
 import bcrypt
 import factory
 
-from api.models import Appointment, Service, TechnicianProfile, User
+from api.models import (
+    AppEvent,
+    Appointment,
+    AssetTypeCatalog,
+    EntityEmbedding,
+    Home,
+    HomeAsset,
+    HomeMember,
+    HomeRoom,
+    ProfileAttribute,
+    RecommendationEvent,
+    RoomTypeCatalog,
+    Service,
+    TechnicianProfile,
+    User,
+)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -67,3 +82,107 @@ class AppointmentFactory(factory.django.DjangoModelFactory):
     status = 'scheduled'
     address = 'Calle 1 #2-3'
     evidence_photos = factory.LazyFunction(list)
+
+
+class RoomTypeCatalogFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = RoomTypeCatalog
+
+    code = factory.Sequence(lambda n: f'room{n}')
+    name = factory.Sequence(lambda n: f'Room {n}')
+    is_active = True
+
+
+class AssetTypeCatalogFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = AssetTypeCatalog
+
+    code = factory.Sequence(lambda n: f'asset{n}')
+    name = factory.Sequence(lambda n: f'Asset {n}')
+    category = 'plumbing'
+    is_active = True
+
+
+class HomeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Home
+
+    owner = factory.SubFactory(UserFactory)
+    name = factory.Sequence(lambda n: f'Home {n}')
+    type = 'apartment'
+    rooms_count = 0
+
+
+class HomeMemberFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = HomeMember
+
+    home = factory.SubFactory(HomeFactory)
+    user = factory.SubFactory(UserFactory)
+    role = 'member'
+
+
+class HomeRoomFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = HomeRoom
+
+    home = factory.SubFactory(HomeFactory)
+    name = factory.Sequence(lambda n: f'Room {n}')
+    type = 'bano'
+
+
+class HomeAssetFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = HomeAsset
+
+    home = factory.SubFactory(HomeFactory)
+    room = None
+    asset_type = 'ducha'
+
+
+class ProfileAttributeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ProfileAttribute
+
+    entity_type = 'user'
+    entity_id = 1
+    attribute_key = factory.Sequence(lambda n: f'attr{n}')
+    attribute_value = factory.LazyFunction(dict)
+    source = 'explicit_user_input'
+    confidence = 1.0
+
+
+class AppEventFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = AppEvent
+
+    user = factory.SubFactory(UserFactory)
+    event_type = 'SERVICE_VIEWED'
+    entity_type = 'service'
+    entity_id = 1
+    metadata = factory.LazyFunction(dict)
+
+
+class RecommendationEventFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = RecommendationEvent
+
+    user = factory.SubFactory(UserFactory)
+    recommendation_type = 'service'
+    entity_id = 1
+    score = 0.5
+    algorithm_version = 'recommendation_v1'
+    position = 1
+    metadata = factory.LazyFunction(dict)
+
+
+class EntityEmbeddingFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = EntityEmbedding
+
+    entity_type = 'service'
+    entity_id = 1
+    content_text = 'Servicio de prueba'
+    embedding = '[1.0,0.0,0.0]'
+    model_name = 'local-hash-512'
+    dimension = 3

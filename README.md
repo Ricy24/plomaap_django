@@ -126,6 +126,11 @@ El backend escucha en el **puerto 5000**, igual que Flask (el frontend asume
 # Unitarias (SQLite en memoria)
 .\venv\Scripts\python.exe -m pytest -m unit -q
 
+# Cobertura de la capa unitaria (api/utils + api/services)
+.\venv\Scripts\python.exe -m coverage erase
+.\venv\Scripts\python.exe -m coverage run --source=api/utils,api/services -m pytest -m unit -q
+.\venv\Scripts\python.exe -m coverage report -m
+
 # Integración contra PostgreSQL/pgvector de .env (crea test_plomapp)
 $env:TEST_USE_CONFIGURED_DB = '1'
 .\venv\Scripts\python.exe -m pytest -m integration -q --create-db
@@ -135,31 +140,48 @@ Remove-Item Env:TEST_USE_CONFIGURED_DB
 .\venv\Scripts\python.exe -m pytest -q
 ```
 
-Los casos conservan los IDs del plan SENA (`UNIT-01`, `INT-01`, etc.). Ver
-[`TESTING.md`](TESTING.md) para el detalle y la matriz de pruebas.
+Resultado real de la suite unitaria:
 
-### 10 pruebas unitarias básicas (entrega del aprendiz)
+- **470 casos aprobados** (323 funciones de prueba, varias parametrizadas).
+- **100 % de cobertura** sobre `api/utils` + `api/services`: 1243 sentencias,
+  0 sin cubrir.
+- Red, SMTP, Gemini y Voyage están simulados con `unittest.mock`; los servicios
+  que usan modelos corren sobre SQLite en memoria.
 
-Además de la suite completa, el archivo
-`api/tests/unit/test_unit_10_basicas.py` contiene **10 pruebas unitarias
-básicas** sobre `api/utils/validators.py`: email, teléfono, contraseña, nombre y
-fecha/hora. No usan base de datos, servidor ni internet.
+### Organización de las pruebas unitarias
 
-```powershell
-.\venv\Scripts\python.exe -m pytest api\tests\unit\test_unit_10_basicas.py -v
+Las pruebas están separadas por módulo, no en un solo archivo:
+
+```
+api/tests/unit/
+  utils/                         # una función por archivo
+    test_validators_email.py
+    test_validators_phone.py
+    test_validators_password.py
+    test_validators_name.py
+    test_validators_date_time.py
+    test_validators_catalogs.py
+    test_jwt_utils.py
+    test_request_utils.py
+    test_dispatch.py
+    test_decorators.py
+    test_email_utils.py
+  services/                      # un servicio por archivo
+    test_appointment_service.py
+    test_embedding_provider.py
+    test_embedding_service.py
+    test_event_service.py
+    test_hybrid_search_service.py
+    test_nlu_service.py
+    test_onboarding_service.py
+    test_profile_service.py
+    test_recommendation_service.py
 ```
 
-Resultado real: **`10 passed`**.
-
-La guía de estudio está en
-[`docs/pruebas/GUIA_10_PRUEBAS_UNITARIAS.md`](docs/pruebas/GUIA_10_PRUEBAS_UNITARIAS.md)
-y el detalle está en la hoja **Pruebas Unitarias** del Excel
+El detalle de cada caso está en la hoja **Pruebas Unitarias** del Excel
 [`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx)
-(casos `UNIT-01` a `UNIT-10`).
-
-> Estas 10 pruebas son las que quedaron registradas en la hoja **Pruebas
-> Unitarias** del Excel. La suite completa del proyecto conserva además las
-> demás pruebas unitarias, de integración y de contrato.
+(casos `UNIT-001` a `UNIT-470`, uno por variante realmente ejecutada).
+Ver [`TESTING.md`](TESTING.md) para los comandos y la matriz completa.
 
 ## Estructura
 
@@ -177,7 +199,7 @@ api/
   templates/emails Plantillas de correo (Django templates)
   middleware.py    JSON para errores (400/401/403/404/500)
   errors.py        handlers de error
-  tests/           unit/ + integration/ (pytest; IDs UNIT-01..INT-04)
+  tests/           unit/ (utils + services) + integration/ (pytest)
 static/uploads/    fotos de evidencia subidas (se sirven en /static/uploads/…)
 docker-compose.yml PostgreSQL 17 + pgvector (reproducción del contenedor)
 ```
