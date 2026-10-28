@@ -17,9 +17,9 @@ Gemini y SMTP se simulan con `unittest.mock`.
 .\venv\Scripts\python.exe -m pytest -m unit -q
 ```
 
-Resultado real: **510 casos aprobados** (363 funciones de prueba; varias están
-parametrizadas), **18 casos de integración deseleccionados**. Incluye los 470
-casos de regresión y las **40 pruebas de la entrega por integrantes**.
+Resultado real: **490 casos aprobados** (363 funciones de prueba; varias están
+parametrizadas), **34 casos de integración deseleccionados**. Incluye los 470
+casos de regresión y las **20 pruebas entregadas por los integrantes**.
 
 ### Cobertura
 
@@ -44,11 +44,11 @@ api/tests/
   factories.py                    fábricas de usuarios, técnicos, servicios, citas,
                                   hogares, catálogos, eventos y embeddings
   unit/
-    equipo/                       entrega del equipo: 10 pruebas por integrante
+    equipo/                       entrega: 20 pruebas (10 por integrante)
       test_integrante_1_validaciones.py
-      test_integrante_2_seguridad.py
       test_integrante_3_citas.py
-      test_integrante_4_datos.py
+                                  pendientes: test_integrante_2_seguridad.py
+                                              test_integrante_4_datos.py
     utils/                        una función/helper por archivo
       test_validators_email.py
       test_validators_phone.py
@@ -79,13 +79,13 @@ config/settings_test.py           SQLite por defecto; Postgres con TEST_USE_CONF
 Cada fila de la hoja **Pruebas Unitarias** del Excel
 (`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`) corresponde a una variante
 realmente ejecutada, con el nodo de pytest como evidencia (`UNIT-001` a
-`UNIT-470`). Las 40 pruebas de `unit/equipo/` son la entrega identificable de
-los 4 integrantes y están detalladas en
+`UNIT-470`). Las 20 pruebas de `unit/equipo/` son la entrega identificable de
+los integrantes que ya entregaron y están detalladas en
 [`docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md`](docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md).
-La copia con esas 40 pruebas (`UNIT-001` a `UNIT-040`) es
-`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx`; contiene
-solo la entrega del equipo, mientras que el archivo original conserva los 470
-casos de regresión sin cambios.
+La copia con esas 20 pruebas (`UNIT-001` a `UNIT-020`) es
+`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx`; contiene
+solo lo entregado, mientras que el archivo original conserva los 470
+casos de regresión sin cambios. Las 20 pruebas restantes quedan pendientes.
 
 ### Entrega por integrantes
 
@@ -93,8 +93,17 @@ casos de regresión sin cambios.
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
 ```
 
-Resultado real: **40 passed**. Cada archivo contiene exactamente 10 pruebas y
+Resultado real: **20 passed**. Cada archivo contiene exactamente 10 pruebas y
 se puede ejecutar por separado para la evidencia individual.
+
+El pipeline verifica además que no haya pruebas repetidas:
+
+```powershell
+.\venv\Scripts\python.exe scripts\check_test_duplicates.py
+```
+
+Falla si dos pruebas tienen el mismo nombre o el mismo cuerpo, aunque se
+renombren las variables.
 
 ## Pruebas de integración
 
@@ -161,7 +170,7 @@ manual (`workflow_dispatch`). Tiene dos jobs:
 
 | Job | Qué ejecuta |
 |---|---|
-| `unit-tests` | `pytest api/tests/unit/equipo -q` (40) y `pytest -m unit -q` (510) con SQLite en memoria |
+| `unit-tests` | `scripts/check_test_duplicates.py`, `pytest api/tests/unit/equipo -q` (20) y `pytest -m unit -q` (490) con SQLite en memoria |
 | `integration-tests` | `pytest api/tests/integration -q --create-db` contra PostgreSQL 17 + pgvector |
 
 `main` está protegida con estos ajustes, así que **no se puede mergear nada sin que
@@ -171,6 +180,8 @@ el pipeline pase**:
 - La rama del PR debe estar actualizada con `main` antes de mergear.
 - Prohibido el push directo, el force push y el borrado de la rama.
 - Se exige resolver las conversaciones antes de mergear.
+- **Se exige la aprobación del responsable** (`.github/CODEOWNERS`): nadie puede
+  mergear su propio trabajo.
 - La regla aplica también a los administradores.
 
 Para revisar o cambiar la configuración:

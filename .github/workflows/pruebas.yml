@@ -38,7 +38,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
-      - name: Pruebas del equipo (40)
+      - name: Verificar pruebas no repetidas
+        run: python scripts/check_test_duplicates.py
+
+      - name: Pruebas entregadas del equipo
         run: python -m pytest api/tests/unit/equipo -q
 
       - name: Suite unitaria completa (510)

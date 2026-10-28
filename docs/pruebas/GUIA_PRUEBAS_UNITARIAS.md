@@ -14,11 +14,11 @@ Están organizadas por módulo, no en un solo archivo:
 
 ```text
 api/tests/unit/
-  equipo/                  # entrega del equipo: 10 pruebas por integrante
+  equipo/                  # entrega: 20 pruebas (10 por integrante)
     test_integrante_1_validaciones.py
-    test_integrante_2_seguridad.py
     test_integrante_3_citas.py
-    test_integrante_4_datos.py
+                           # pendientes: test_integrante_2_seguridad.py
+                           #             test_integrante_4_datos.py
   utils/
     test_validators_email.py
     test_validators_phone.py
@@ -57,15 +57,15 @@ api/tests/unit/
 cd C:\Users\Anrid\backend_plomaap
 .\venv\Scripts\python.exe -m pytest -m unit -q
 
-# Solo la entrega del equipo (40 pruebas)
+# Solo la entrega del equipo (20 pruebas)
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
 ```
 
 Resultado real:
 
 ```text
-510 passed, 18 deselected     # suite unitaria completa
-40 passed                     # entrega: 10 por integrante
+490 passed, 34 deselected     # suite unitaria completa
+20 passed                     # entrega: 10 por integrante
 ```
 
 ### Cobertura
@@ -114,18 +114,21 @@ Cuando un mismo caso lógico se prueba con varios datos se usa
 La hoja **Pruebas Unitarias** de
 [`Plan_de_Pruebas_PlomApp_SENA.xlsx`](Plan_de_Pruebas_PlomApp_SENA.xlsx) contiene
 **470 filas** (`UNIT-001` a `UNIT-470`), una por variante realmente ejecutada.
-Las **40 pruebas de `equipo/`** son la entrega identificable de los 4
-integrantes; su matriz está en
+Las **20 pruebas de `equipo/`** son la entrega identificable de los integrantes
+que ya entregaron; su matriz está en
 [`ASIGNACION_PRUEBAS_EQUIPO.md`](ASIGNACION_PRUEBAS_EQUIPO.md).
 La copia de entrega
-[`Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx`](Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx)
-contiene únicamente esos 40 casos (`UNIT-001` a `UNIT-040`) e incluye la columna
+[`Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx`](Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx)
+contiene únicamente esos 20 casos (`UNIT-001` a `UNIT-020`) e incluye la columna
 **Responsable / Integrante**; el original de 470 casos queda intacto.
+Las 20 pruebas restantes quedan pendientes de entrega.
 Cada fila incluye el nodo exacto de pytest en la columna de evidencia.
 
 ## Consejos para la entrega
 
-- No inventes resultados: ejecuta el comando y muestra el `510 passed`.
+- No inventes resultados: ejecuta el comando y muestra el `20 passed`.
+- No copies pruebas de otro integrante: el pipeline rechaza nombres y cuerpos
+  repetidos (`scripts/check_test_duplicates.py`).
 - No uses datos aleatorios; usa datos fijos para saber qué esperar.
 - Cada prueba debe tener un nombre claro y revisar una sola cosa.
 - Si una prueba falla, revisa primero el dato de entrada y el resultado esperado.

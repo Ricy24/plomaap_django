@@ -1,47 +1,58 @@
 # Asignación de pruebas unitarias por integrante
 
-Entrega del equipo: **10 pruebas unitarias por integrante**, **40 en total**.
+Estado actual: **20 pruebas entregadas** (Andrés Durán y Dairon Salazar) y
+**20 pendientes** (Sebastián Samacá y Kevin Pinzón).
+
 Cada integrante tiene su propio archivo, así que pueden trabajar en paralelo sin
 pisarse ni generar conflictos en Git.
 
 ## Resumen de la división
 
-| Integrante | Archivo | Módulo que prueba | Pruebas |
-|---|---|---|---:|
-| Integrante 1: ______________________ | `api/tests/unit/equipo/test_integrante_1_validaciones.py` | `api/utils/validators.py` | 10 |
-| Integrante 2: ______________________ | `api/tests/unit/equipo/test_integrante_2_seguridad.py` | `api/utils/jwt_utils.py` + `api/utils/decorators.py` | 10 |
-| Integrante 3: ______________________ | `api/tests/unit/equipo/test_integrante_3_citas.py` | `api/services/appointment_service.py` | 10 |
-| Integrante 4: ______________________ | `api/tests/unit/equipo/test_integrante_4_datos.py` | `profile_service` + `event_service` + `recommendation_service` | 10 |
-| **Total** | | | **40** |
+| Integrante | Archivo | Módulo que prueba | Pruebas | Estado |
+|---|---|---|---:|---|
+| Andrés Durán | `api/tests/unit/equipo/test_integrante_1_validaciones.py` | `api/utils/validators.py` | 10 | Entregado |
+| Sebastián Samacá | `api/tests/unit/equipo/test_integrante_2_seguridad.py` | `api/utils/jwt_utils.py` + `api/utils/decorators.py` | 10 | **Pendiente** |
+| Dairon Salazar | `api/tests/unit/equipo/test_integrante_3_citas.py` | `api/services/appointment_service.py` | 10 | Entregado |
+| Kevin Pinzón | `api/tests/unit/equipo/test_integrante_4_datos.py` | `profile_service` + `event_service` + `recommendation_service` | 10 | **Pendiente** |
+| **Total** | | | **40** | **20 entregadas** |
 
 > La suite histórica de regresión sigue viviendo en `api/tests/unit/utils/` y
 > `api/tests/unit/services/` (470 casos). La carpeta `equipo/` es la entrega
-> identificable de los 4 integrantes.
+> identificable de los integrantes.
 
 ## Cómo ejecutar
 
 Desde la raíz del proyecto:
 
 ```powershell
-# Las 40 pruebas de la entrega
+# Las pruebas entregadas (20)
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
 
-# Solo las pruebas de un integrante
+# Solo una entrega
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo\test_integrante_1_validaciones.py -q
-.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo\test_integrante_2_seguridad.py -q
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo\test_integrante_3_citas.py -q
-.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo\test_integrante_4_datos.py -q
 
 # Toda la suite unitaria (entrega + regresión)
 .\venv\Scripts\python.exe -m pytest -m unit -q
 ```
 
-Resultado real del **27/10/2026**:
+Resultado real del **28/10/2026**:
 
 ```text
-pytest api\tests\unit\equipo -q      -> 40 passed
-pytest -m unit -q                    -> 510 passed, 18 deselected
+pytest api\tests\unit\equipo -q      -> 20 passed
+pytest -m unit -q                    -> 490 passed, 34 deselected
 ```
+
+## Reglas para las entregas pendientes
+
+1. **Archivo propio**: cada integrante crea su archivo en `api/tests/unit/equipo/`.
+2. **10 pruebas que pasen**: no se acepta código que rompa la suite.
+3. **Sin repetidas**: el pipeline falla si detecta nombres de prueba duplicados o
+   cuerpos idénticos dentro de `equipo/`.
+4. **Sin copiar**: cada prueba debe apuntar a su módulo asignado y usar sus propios
+   datos; no se aceptan copias de otra entrega con el nombre cambiado.
+5. **Entrega por Pull Request**: se abre un PR hacia `main` y lo revisa el
+   responsable del repositorio. Nadie puede mergear su propio PR.
 
 ## Integrante 1 - Validaciones de entrada
 
@@ -61,23 +72,20 @@ Funciones puras: no usan base de datos ni red.
 | 9 | `test_fecha_con_formato_incorrecto_es_invalida` | Rechaza `02/11/2026` |
 | 10 | `test_rol_valido` | Acepta el rol `technician` |
 
-## Integrante 2 - Seguridad y sesión
+## Integrante 2 - Seguridad y sesión (PENDIENTE)
 
-Archivo: `test_integrante_2_seguridad.py`
-Simula peticiones con `RequestFactory`; no levanta el servidor.
+Archivo a crear: `test_integrante_2_seguridad.py`
+Módulos asignados: `api/utils/jwt_utils.py` y `api/utils/decorators.py`
 
-| # | Prueba | Qué verifica |
-|---|---|---|
-| 1 | `test_generar_token_devuelve_texto` | El JWT es texto con 3 partes |
-| 2 | `test_token_contiene_id_del_usuario` | El claim `sub` guarda el id |
-| 3 | `test_token_alterado_es_rechazado` | Una firma alterada no es válida |
-| 4 | `test_token_expirado_es_rechazado` | Un token vencido devuelve `None` |
-| 5 | `test_extraer_token_con_bearer` | Lee `Bearer <token>` |
-| 6 | `test_extraer_token_sin_encabezado_retorna_none` | Sin cabecera no hay token |
-| 7 | `test_get_current_user_id_devuelve_entero` | Convierte el id a entero |
-| 8 | `test_decorador_sin_token_responde_401` | Vista protegida sin token -> 401 |
-| 9 | `test_admin_only_rechaza_a_un_cliente` | Cliente en vista admin -> 403 |
-| 10 | `test_jwt_optional_permite_peticion_sin_token` | Token opcional deja `jwt_user = None` |
+Debe entregar 10 pruebas propias sobre, como mínimo:
+
+- Generación y validación de tokens JWT.
+- Lectura del encabezado `Authorization: Bearer <token>`.
+- Rechazo de tokens alterados o vencidos.
+- Comportamiento de los decoradores `jwt_required`, `admin_only` y `jwt_optional`.
+- Códigos de respuesta `401` y `403`.
+
+Las pruebas deben usar `RequestFactory` y no levantar el servidor.
 
 ## Integrante 3 - Citas y disponibilidad
 
@@ -97,54 +105,39 @@ Usa SQLite en memoria y las fábricas de `api/tests/factories.py`.
 | 9 | `test_tecnico_libre_esta_disponible` | Técnico libre -> disponible |
 | 10 | `test_tecnico_fuera_de_horario_no_esta_disponible` | A las 7:00 no atiende |
 
-## Integrante 4 - Perfil, eventos y recomendaciones
+## Integrante 4 - Perfil, eventos y recomendaciones (PENDIENTE)
 
-Archivo: `test_integrante_4_datos.py`
-Servicios de negocio que escriben en la base de datos de pruebas.
+Archivo a crear: `test_integrante_4_datos.py`
+Módulos asignados: `profile_service`, `event_service` y `recommendation_service`
 
-| # | Prueba | Qué verifica |
-|---|---|---|
-| 1 | `test_record_attribute_guarda_el_valor` | Guarda un atributo del perfil |
-| 2 | `test_record_attribute_actualiza_si_ya_existe` | Actualiza sin duplicar filas |
-| 3 | `test_record_attribute_rechaza_fuente_invalida` | Fuente fuera del catálogo -> `ValueError` |
-| 4 | `test_record_attribute_rechaza_confianza_fuera_de_rango` | Confianza > 1.0 -> `ValueError` |
-| 5 | `test_delete_entity_attributes_elimina_los_atributos` | Borra y retorna cuántos eliminó |
-| 6 | `test_track_event_crea_el_evento` | Registra un evento válido |
-| 7 | `test_track_event_invalido_retorna_none` | Evento desconocido no rompe la petición |
-| 8 | `test_track_event_invalido_en_modo_estricto_lanza_error` | Modo estricto sí falla |
-| 9 | `test_click_en_recomendacion_se_registra` | Marca el clic y crea el evento |
-| 10 | `test_generate_recommendations_respeta_el_limite` | Devuelve como máximo `limit` |
+Debe entregar 10 pruebas propias sobre, como mínimo:
 
-## Reglas que sigue cada prueba
-
-1. **Un archivo por integrante**: identifica rápido quién escribió qué.
-2. **Nombre descriptivo en español**: el nombre dice qué se espera, no cómo se
-   implementa (`test_password_corta_es_invalida`, no `test_password_2`).
-3. **Patrón AAA**: Arrange (preparar), Act (ejecutar), Assert (comprobar).
-4. **Datos fijos**: nada de valores aleatorios; así el resultado es reproducible.
-5. **Sin red ni servidor**: JWT y base de datos se manejan localmente; las
-   pruebas que usan modelos corren sobre SQLite en memoria.
-6. **Marcadas como `unit`**: `pytestmark = pytest.mark.unit` en cada archivo.
+- Registro y actualización de atributos del perfil.
+- Validación de fuente y de rango de confianza.
+- Borrado de atributos de una entidad.
+- Registro de eventos válidos e inválidos (modo normal y estricto).
+- Clic en una recomendación.
+- Límite de resultados en `generate_recommendations`.
 
 ## Evidencia para la entrega
 
-El equipo tiene dos archivos en `docs/pruebas/`:
+Archivos en `docs/pruebas/`:
 
 | Archivo | Contenido |
 |---|---|
 | `Plan_de_Pruebas_PlomApp_SENA.xlsx` | Original con los 470 casos de regresión (no se modificó) |
-| `Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx` | **Entrega**: solo las 40 pruebas del equipo (`UNIT-001` a `UNIT-040`) |
+| `Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx` | **Entrega**: las 20 pruebas de Andrés y Dairon (`UNIT-001` a `UNIT-020`) |
 
-En la copia, la hoja **Control y Resumen** ya tiene los nombres del equipo en
-"Aprendices / Equipo de Pruebas". La hoja **Pruebas Unitarias** agrega la columna
-**Responsable / Integrante**, con 10 filas asignadas a cada uno:
+En la copia, la hoja **Control y Resumen** tiene los nombres de quienes ya
+entregaron en "Aprendices / Equipo de Pruebas". La hoja **Pruebas Unitarias**
+incluye la columna **Responsable / Integrante**:
 
-| Integrante | Casos en el Excel |
-|---|---|
-| Andrés Durán | `UNIT-001` a `UNIT-010` |
-| Sebastián Samacá | `UNIT-011` a `UNIT-020` |
-| Dairon Salazar | `UNIT-021` a `UNIT-030` |
-| Kevin Pinzón | `UNIT-031` a `UNIT-040` |
+| Integrante | Casos en el Excel | Estado |
+|---|---|---|
+| Andrés Durán | `UNIT-001` a `UNIT-010` | Entregado |
+| Dairon Salazar | `UNIT-011` a `UNIT-020` | Entregado |
+| Sebastián Samacá | — | Pendiente |
+| Kevin Pinzón | — | Pendiente |
 
 Cada integrante debe adjuntar la salida de su archivo, por ejemplo:
 
@@ -153,18 +146,18 @@ api/tests/unit/equipo/test_integrante_1_validaciones.py .......... [100%]
 10 passed
 ```
 
-Y el consolidado del equipo:
+Y el consolidado de lo entregado:
 
 ```text
 api/tests/unit/equipo ............................................ [100%]
-40 passed
+20 passed
 ```
 
 ## Reparto sugerido para la exposición
 
 | Integrante | Tema | Pregunta que debe poder responder |
 |---|---|---|
-| 1 | Validaciones | ¿Qué datos rechaza el registro y por qué? |
-| 2 | Seguridad | ¿Cómo se protege una vista y qué pasa sin token? |
-| 3 | Citas | ¿Cómo se evita que dos citas ocupen la misma hora? |
-| 4 | Datos | ¿Cómo se guarda el perfil y qué pasa con un evento inválido? |
+| Andrés Durán | Validaciones | ¿Qué datos rechaza el registro y por qué? |
+| Sebastián Samacá | Seguridad | ¿Cómo se protege una vista y qué pasa sin token? |
+| Dairon Salazar | Citas | ¿Cómo se evita que dos citas ocupen la misma hora? |
+| Kevin Pinzón | Datos | ¿Cómo se guarda el perfil y qué pasa con un evento inválido? |
