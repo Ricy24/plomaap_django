@@ -1,0 +1,9 @@
+# Configuración de GitGuardian para este repositorio.
+#
+# Las credenciales que aparecen en las pruebas son valores ficticios usados
+# para validar funciones de login/registro contra una base SQLite en memoria.
+# No son secretos reales ni dan acceso a ningún servicio.
+version: 2
+secret:
+  ignored-paths:
+    - "api/tests/**"
