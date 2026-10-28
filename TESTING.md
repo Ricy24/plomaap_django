@@ -153,6 +153,37 @@ Casos:
 - `INT-04`: upload de evidencias (PNG válido, contenido falso, tamaño máximo) y
   persistencia de `evidence_photos`.
 
+## CI en GitHub y protección de `main`
+
+El pipeline está en [`.github/workflows/pruebas.yml`](.github/workflows/pruebas.yml) y se
+ejecuta en cada `pull_request` hacia `main`, en cada push a `dev_Andres` y de forma
+manual (`workflow_dispatch`). Tiene dos jobs:
+
+| Job | Qué ejecuta |
+|---|---|
+| `unit-tests` | `pytest api/tests/unit/equipo -q` (40) y `pytest -m unit -q` (510) con SQLite en memoria |
+| `integration-tests` | `pytest api/tests/integration -q --create-db` contra PostgreSQL 17 + pgvector |
+
+`main` está protegida con estos ajustes, así que **no se puede mergear nada sin que
+el pipeline pase**:
+
+- Checks obligatorios: `unit-tests` e `integration-tests`.
+- La rama del PR debe estar actualizada con `main` antes de mergear.
+- Prohibido el push directo, el force push y el borrado de la rama.
+- Se exige resolver las conversaciones antes de mergear.
+- La regla aplica también a los administradores.
+
+Para revisar o cambiar la configuración:
+
+```powershell
+gh api repos/Ricy24/plomaap_django/branches/main/protection
+```
+
+Si GitHub muestra `The job was not started because your account is locked due to a
+billing issue`, los jobs no arrancan y el PR queda en `BLOCKED`. Hay que resolver la
+facturación en **Settings → Billing and plans** de la cuenta; mientras tanto las
+pruebas se pueden ejecutar en local con los comandos de este documento.
+
 ## Suite completa
 
 ```powershell
