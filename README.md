@@ -123,11 +123,90 @@ El backend escucha en el **puerto 5000**, igual que Flask (el frontend asume
 ## Tests
 
 ```powershell
-python manage.py test api
+# Unitarias (SQLite en memoria)
+.\venv\Scripts\python.exe -m pytest -m unit -q
+
+# Entrega del equipo: 10 pruebas por integrante (40 en total)
+.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
+
+# Cobertura de la capa unitaria (api/utils + api/services)
+.\venv\Scripts\python.exe -m coverage erase
+.\venv\Scripts\python.exe -m coverage run --source=api/utils,api/services -m pytest -m unit -q
+.\venv\Scripts\python.exe -m coverage report -m
+
+# Integración contra PostgreSQL/pgvector de .env (crea test_plomapp)
+$env:TEST_USE_CONFIGURED_DB = '1'
+.\venv\Scripts\python.exe -m pytest -m integration -q --create-db
+Remove-Item Env:TEST_USE_CONFIGURED_DB
+
+# Suite completa
+.\venv\Scripts\python.exe -m pytest -q
 ```
 
-Corren en SQLite en memoria. Usa `TEST_USE_CONFIGURED_DB=1` para probar
-contra la base configurada (creará `test_plomapp`).
+Resultado real de la suite unitaria:
+
+- **510 casos aprobados** (363 funciones de prueba, varias parametrizadas):
+  470 de regresión + **40 de la entrega por integrantes**.
+- **100 % de cobertura** sobre `api/utils` + `api/services`: 1243 sentencias,
+  0 sin cubrir.
+- Red, SMTP, Gemini y Voyage están simulados con `unittest.mock`; los servicios
+  que usan modelos corren sobre SQLite en memoria.
+
+Integración real con PostgreSQL + pgvector (contenedor desechable, 27/10/2026):
+
+- **8 pruebas de integración aprobadas**, incluidas `select_for_update` y
+  `vector(512)` con índice HNSW.
+- **18 pruebas aprobadas** al ejecutar todo `api/tests/integration` (integración
+  + contrato de API).
+- Django creó y destruyó `test_plomapp_test`; la base real no se tocó y el
+  contenedor temporal se eliminó al finalizar. Ver
+  [`TESTING.md`](TESTING.md#contenedor-desechable-prueba-satisfactoria).
+
+### Organización de las pruebas unitarias
+
+Las pruebas están separadas por módulo, no en un solo archivo:
+
+```
+api/tests/unit/
+  equipo/                        # entrega: 10 pruebas por integrante
+    test_integrante_1_validaciones.py
+    test_integrante_2_seguridad.py
+    test_integrante_3_citas.py
+    test_integrante_4_datos.py
+  utils/                         # una función por archivo
+    test_validators_email.py
+    test_validators_phone.py
+    test_validators_password.py
+    test_validators_name.py
+    test_validators_date_time.py
+    test_validators_catalogs.py
+    test_jwt_utils.py
+    test_request_utils.py
+    test_dispatch.py
+    test_decorators.py
+    test_email_utils.py
+  services/                      # un servicio por archivo
+    test_appointment_service.py
+    test_embedding_provider.py
+    test_embedding_service.py
+    test_event_service.py
+    test_hybrid_search_service.py
+    test_nlu_service.py
+    test_onboarding_service.py
+    test_profile_service.py
+    test_recommendation_service.py
+```
+
+El detalle de cada caso está en la hoja **Pruebas Unitarias** del Excel
+[`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx)
+(casos `UNIT-001` a `UNIT-470`, uno por variante realmente ejecutada).
+La división de las 40 pruebas de la entrega (10 por integrante) está en
+[`docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md`](docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md)
+y en la copia
+[`Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_40_pruebas_equipo.xlsx),
+que contiene únicamente esas 40 pruebas (`UNIT-001` a `UNIT-040`) sin modificar
+el original de 470 casos.
+Ver [`TESTING.md`](TESTING.md) para los comandos y la matriz completa.
 
 ## Estructura
 
@@ -145,7 +224,7 @@ api/
   templates/emails Plantillas de correo (Django templates)
   middleware.py    JSON para errores (400/401/403/404/500)
   errors.py        handlers de error
-  tests.py         tests de contrato (port de tests/test_api_contract.py)
+  tests/           unit/ (utils + services) + integration/ (pytest)
 static/uploads/    fotos de evidencia subidas (se sirven en /static/uploads/…)
 docker-compose.yml PostgreSQL 17 + pgvector (reproducción del contenedor)
 ```

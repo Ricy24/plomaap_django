@@ -8,3 +8,6 @@ coverage==7.17.0
 factory-boy==3.3.3
 freezegun==1.5.5
 responses==0.26.3
+
+# Utilidades de documentación (plan de pruebas SENA en Excel)
+openpyxl==3.1.5

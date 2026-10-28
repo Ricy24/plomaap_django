@@ -30,6 +30,9 @@ playwright-report/
 .mypy_cache/
 .ruff_cache/
 
+# Archivos temporales de Office (bloqueos al abrir Excel/Word)
+~$*
+
 # IDE / SO
 .vscode/
 .idea/
