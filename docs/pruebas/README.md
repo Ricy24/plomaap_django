@@ -10,6 +10,7 @@
 | [`GUIA_PRUEBAS_UNITARIAS.md`](GUIA_PRUEBAS_UNITARIAS.md) | Cómo está organizada la suite y cómo se escribe una prueba |
 | [`RECURSOS.md`](RECURSOS.md) | Documentación y videos por tema |
 | [`PASO_A_PASO.md`](PASO_A_PASO.md) | Guía corta para el responsable y para cada integrante |
+| [`COMO_SUBIR.md`](COMO_SUBIR.md) | Fork, rama, commit y Pull Request paso a paso |
 | [`../../TESTING.md`](../../TESTING.md) | Pipeline completo, cobertura, integración y CI |
 
 ## Regla general

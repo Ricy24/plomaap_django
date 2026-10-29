@@ -4,9 +4,15 @@ Responsable: **Sebastián Samacá**.
 
 | Ronda | Archivo | Estado |
 |---|---|---|
-| Base | `test_integrante_2_seguridad.py` | Pendiente |
-| Avanzada | `test_reto_avanzado.py` | Pendiente |
+| Base | `test_integrante_2_seguridad.py` | **Pendiente** |
+| Avanzada | `test_reto_avanzado.py` | **Pendiente** |
 
-La ronda base está en [`CONTRATO_PRUEBAS_PENDIENTES.md`](../../../../../docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md)
-y la avanzada en [`RETO_AVANZADO.md`](../../../../../docs/pruebas/RETO_AVANZADO.md).
-No cambies los nombres de las pruebas ni el de los archivos.
+## Tus instrucciones
+
+1. Ronda base: [`CONTRATO_PRUEBAS_PENDIENTES.md`](../../../../../docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md).
+2. Ronda avanzada: [`RETO_AVANZADO.md`](../../../../../docs/pruebas/RETO_AVANZADO.md).
+3. Cómo subir con fork y PR: [`COMO_SUBIR.md`](../../../../../docs/pruebas/COMO_SUBIR.md).
+4. Recursos: [`RECURSOS.md`](../../../../../docs/pruebas/RECURSOS.md).
+
+No cambies los nombres de las pruebas ni el de los archivos. La solución no está
+en el repositorio: se deduce leyendo el código.

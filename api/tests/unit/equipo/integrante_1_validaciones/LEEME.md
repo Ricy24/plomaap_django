@@ -5,7 +5,13 @@ Responsable: **Andrés Durán**.
 | Ronda | Archivo | Estado |
 |---|---|---|
 | Base | `test_integrante_1_validaciones.py` | Entregada |
-| Avanzada | `test_reto_avanzado.py` | Pendiente |
+| Avanzada | `test_reto_avanzado.py` | **Pendiente** |
 
-La ronda avanzada se describe en [`RETO_AVANZADO.md`](../../../../../docs/pruebas/RETO_AVANZADO.md).
-No cambies los nombres de las pruebas ni el de los archivos.
+## Tus instrucciones
+
+1. Ronda avanzada: [`RETO_AVANZADO.md`](../../../../../docs/pruebas/RETO_AVANZADO.md).
+2. Cómo subir con fork y PR: [`COMO_SUBIR.md`](../../../../../docs/pruebas/COMO_SUBIR.md).
+3. Recursos: [`RECURSOS.md`](../../../../../docs/pruebas/RECURSOS.md).
+
+No cambies los nombres de las pruebas ni el de los archivos. La solución no está
+en el repositorio: se deduce leyendo el código.

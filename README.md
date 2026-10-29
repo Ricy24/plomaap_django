@@ -10,6 +10,28 @@ texto. El frontend React **no necesita ningún cambio**.
 > Django (`/admin/`) ni autenticación por sesiones. Toda la autenticación es
 > JWT y la interfaz de usuario es el frontend React. Ver [Seguridad](#seguridad).
 
+## Equipo: entrega de pruebas unitarias
+
+Si eres integrante del equipo, **empieza por tu carpeta**:
+
+| Integrante | Carpeta | Instrucciones |
+|---|---|---|
+| Andrés Durán | `api/tests/unit/equipo/integrante_1_validaciones/` | [`LEEME.md`](api/tests/unit/equipo/integrante_1_validaciones/LEEME.md) |
+| Sebastián Samacá | `api/tests/unit/equipo/integrante_2_seguridad/` | [`LEEME.md`](api/tests/unit/equipo/integrante_2_seguridad/LEEME.md) |
+| Dairon Salazar | `api/tests/unit/equipo/integrante_3_citas/` | [`LEEME.md`](api/tests/unit/equipo/integrante_3_citas/LEEME.md) |
+| Kevin Pinzón | `api/tests/unit/equipo/integrante_4_datos/` | [`LEEME.md`](api/tests/unit/equipo/integrante_4_datos/LEEME.md) |
+
+Documentos clave:
+
+- [`docs/pruebas/PASO_A_PASO.md`](docs/pruebas/PASO_A_PASO.md): qué hacer, en orden.
+- [`docs/pruebas/COMO_SUBIR.md`](docs/pruebas/COMO_SUBIR.md): fork, rama, commit y PR.
+- [`docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md`](docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md): ronda base.
+- [`docs/pruebas/RETO_AVANZADO.md`](docs/pruebas/RETO_AVANZADO.md): ronda avanzada.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md): reglas para contribuir.
+
+No hay respuestas en el repositorio: las pruebas se deducen leyendo el código y
+se defienden oralmente.
+
 ## Requisitos
 
 - Python 3.12+ (Django 6.1.2 requiere `>=3.12`)
