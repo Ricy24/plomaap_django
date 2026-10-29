@@ -23,12 +23,17 @@ static/uploads/evidence/*
 # Pruebas y reportes
 .pytest_cache/
 .coverage
+coverage.xml
 htmlcov/
 reports/
 test-results/
 playwright-report/
 .mypy_cache/
 .ruff_cache/
+informe_entrega.xlsx
+
+# Evidencia interna del responsable (no se publica en GitHub)
+docs/.interno/
 
 # Archivos temporales de Office (bloqueos al abrir Excel/Word)
 ~$*

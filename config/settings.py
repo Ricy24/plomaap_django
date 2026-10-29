@@ -20,6 +20,16 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+# Django usa MySQLdb; el proyecto ya trae PyMySQL como driver puro Python.
+# Sin este alias, el backend MySQL no arranca en CI ni en equipos sin
+# mysqlclient instalado.
+try:  # pragma: no cover - depende del entorno
+    import pymysql
+
+    pymysql.install_as_MySQLdb()
+except ImportError:  # pragma: no cover
+    pass
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load .env from project root (same behavior as Flask's load_dotenv())

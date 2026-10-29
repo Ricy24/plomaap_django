@@ -124,8 +124,10 @@ def test_cosine_similarity_casos_invalidos_retornan_cero(a, b):
     assert _cosine_similarity(a, b) == 0.0
 
 
-def test_is_postgres_falso_en_sqlite():
-    assert _is_postgres() is False
+def test_is_postgres_refleja_el_motor():
+    from django.db import connection
+
+    assert _is_postgres() is (connection.vendor == 'postgresql')
 
 
 # --------------------------------------------------------------------------- #

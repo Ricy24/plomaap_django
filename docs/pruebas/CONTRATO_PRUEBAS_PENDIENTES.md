@@ -1,34 +1,70 @@
-# Contrato de las pruebas pendientes
+# Contrato · ronda base
 
-Este documento fija **qué pruebas** debe entregar cada integrante y **qué función**
-debe cubrir cada una. No incluye los resultados esperados: eso lo tienes que
-deducir leyendo el código del proyecto.
+Esta ronda ya está cerrada. Solo se entregan los archivos que faltan. **No hay
+pistas ni resultados esperados**: el comportamiento se deduce leyendo el código.
 
-| Integrante | Archivo a crear | Responsable |
-|---|---|---|
-| Sebastián Samacá | `api/tests/unit/equipo/test_integrante_2_seguridad.py` | Sebastián Samacá |
-| Kevin Pinzón | `api/tests/unit/equipo/test_integrante_4_datos.py` | Kevin Pinzón |
+## Archivos pendientes
 
----
+| Integrante | Archivo |
+|---|---|
+| Sebastián Samacá | `api/tests/unit/equipo/integrante_2_seguridad/test_integrante_2_seguridad.py` |
+| Kevin Pinzón | `api/tests/unit/equipo/integrante_4_datos/test_integrante_4_datos.py` |
 
-## Formato obligatorio
+## 1. Qué se entrega
 
-Cada archivo debe empezar así:
+Un archivo `.py` con **exactamente 10 pruebas**, con estos nombres y en este
+orden. No se pueden cambiar ni agregar pruebas extra.
+
+### Sebastián Samacá
+
+Módulos: `api/utils/jwt_utils.py` y `api/utils/decorators.py`.
+
+```text
+test_token_lleva_el_id_como_texto
+test_token_con_firma_alterada_se_descarta
+test_token_vencido_se_descarta
+test_esquema_bearer_ignora_mayusculas
+test_token_sin_esquema_se_acepta
+test_identidad_no_numerica_devuelve_none
+test_token_de_usuario_inexistente_responde_401
+test_usuario_inactivo_responde_401
+test_tecnico_no_entra_a_vista_de_admin
+test_cliente_no_entra_a_vista_de_tecnico
+```
+
+### Kevin Pinzón
+
+Módulos: `api/services/profile_service.py` y `api/services/event_service.py`.
+
+```text
+test_decimal_entero_se_guarda_como_entero
+test_decimal_con_fraccion_conserva_decimales
+test_fecha_se_guarda_en_iso
+test_segundo_registro_actualiza_sin_duplicar
+test_fuente_fuera_del_catalogo_es_rechazada
+test_confianza_fuera_de_rango_es_rechazada
+test_eliminar_atributos_devuelve_la_cantidad
+test_evento_invalido_no_lanza_sin_strict
+test_evento_invalido_lanza_en_strict
+test_metadata_vacia_se_guarda_como_dict
+```
+
+> El nombre de cada prueba dice qué comportamiento se espera. Qué función usar,
+> qué datos pasar y qué comparar es tu trabajo.
+
+## 2. Formato obligatorio
 
 ```python
 import pytest
 
 pytestmark = pytest.mark.unit
-```
 
-Cada prueba debe tener exactamente este docstring:
 
-```python
 def test_nombre_del_contrato():
-    """Caso: qué situación pruebas.
+    """Caso: la situación que pruebas.
     Entrada: los datos exactos que usas.
-    Esperado: el resultado que comprobaste al leer el código.
-    Cubre: ruta/del/archivo.py::simbolo
+    Esperado: lo que comprobaste al leer el código.
+    Cubre: api/utils/jwt_utils.py::decode_token
     """
     # Arrange
     ...
@@ -37,117 +73,66 @@ def test_nombre_del_contrato():
     ...
 
     # Assert
-    assert resultado == valor_que_encontraste
+    assert resultado == valor_real
 ```
 
-Reglas del `assert`:
+| Regla | Detalle |
+|---|---|
+| `Cubre:` | `ruta/del/modulo.py::simbolo`. La ruta debe ser uno de tus módulos y el símbolo debe existir. |
+| Uso real | La prueba debe **llamar** al símbolo (o usar la constante), no solo nombrarlo. |
+| Assert | Comparación real (`==`, `!=`, `in`, `is None`, `>`, ...) o `pytest.raises` con una excepción específica. |
+| Tamaño | Máximo 25 líneas por prueba. |
+| Símbolos | Al menos 3 símbolos distintos en todo el archivo. |
+| Prohibido | `mock`, `monkeypatch`, `MagicMock`, `parametrize`, `skip`, `xfail`, `random`, `sleep` y leer el código fuente en tiempo de ejecución. |
 
-- Debe comparar de verdad (`==`, `!=`, `is True`, `in`, `>`, `<`, etc.).
-- No sirve `assert True`, `assert 1` ni `assert resultado is not None`.
-- Si la función debe lanzar un error, usa `with pytest.raises(...)`.
+Si necesitas base de datos, usa `@pytest.mark.django_db` y las fábricas de
+`api/tests/factories.py`.
 
-El nombre de la prueba y la ruta de `Cubre:` **no se pueden cambiar**: son los del
-contrato. Si cambias uno, el pipeline rechaza la entrega.
+## 3. Cómo se aprueba
 
----
+La entrega se acepta solo si pasa **todo** esto, automáticamente:
 
-## Sebastián Samacá - Seguridad y sesión
+1. Cumple el formato.
+2. Las 10 pruebas pasan en SQLite.
+3. Las 10 pruebas pasan en PostgreSQL y en MySQL (lo corre GitHub).
+4. El archivo detecta **al menos el 60 %** de los fallos inyectados en los
+   símbolos que declaras en `Cubre:` y un mínimo absoluto de 6. Los fallos son
+   invisibles: no sabes cuáles son ni cuántos.
 
-Archivo: `test_integrante_2_seguridad.py`
-Módulos: `api/utils/jwt_utils.py` y `api/utils/decorators.py`
+El punto 4 significa que el sistema rompe el código a propósito y ejecuta tus
+pruebas. Si tus pruebas se dan cuenta, cuentan. Una prueba que solo verifica que
+"no explota" no detecta nada.
 
-| # | Nombre exacto de la prueba | Debe cubrir | Pista |
-|---|---|---|---|
-| 1 | `test_generar_token_devuelve_texto` | `api/utils/jwt_utils.py::generate_token` | Mira qué tipo devuelve y cuántas partes tiene. |
-| 2 | `test_token_contiene_identidad_del_usuario` | `api/utils/jwt_utils.py::decode_token` | Mira qué dato del usuario queda guardado. |
-| 3 | `test_token_alterado_es_rechazado` | `api/utils/jwt_utils.py::decode_token` | Cambia un carácter y observa qué devuelve. |
-| 4 | `test_token_expirado_es_rechazado` | `api/utils/jwt_utils.py::decode_token` | Genera uno ya vencido y observa qué devuelve. |
-| 5 | `test_extraer_token_con_bearer` | `api/utils/jwt_utils.py::get_token_from_request` | Simula `Authorization: Bearer <token>`. |
-| 6 | `test_extraer_token_sin_encabezado` | `api/utils/jwt_utils.py::get_token_from_request` | Simula una petición sin encabezado. |
-| 7 | `test_identidad_del_token_es_entero` | `api/utils/jwt_utils.py::get_current_user_id` | Mira el tipo del dato que devuelve. |
-| 8 | `test_vista_protegida_sin_token_responde_401` | `api/utils/decorators.py::jwt_required` | Mira el código HTTP cuando no hay token. |
-| 9 | `test_vista_de_admin_rechaza_a_un_cliente` | `api/utils/decorators.py::admin_only` | Autentica un cliente y mira el código HTTP. |
-| 10 | `test_jwt_optional_permite_peticion_sin_token` | `api/utils/decorators.py::jwt_optional` | Mira qué pasa con la petición sin token. |
-
----
-
-## Kevin Pinzón - Perfil, eventos y recomendaciones
-
-Archivo: `test_integrante_4_datos.py`
-Módulos: `api/services/profile_service.py`, `api/services/event_service.py` y
-`api/services/recommendation_service.py`
-
-| # | Nombre exacto de la prueba | Debe cubrir | Pista |
-|---|---|---|---|
-| 1 | `test_registrar_atributo_nuevo` | `api/services/profile_service.py::record_attribute` | Mira qué queda guardado en la base. |
-| 2 | `test_actualizar_atributo_existente` | `api/services/profile_service.py::record_attribute` | Guarda dos veces lo mismo y cuenta las filas. |
-| 3 | `test_rechazar_fuente_desconocida` | `api/services/profile_service.py::record_attribute` | Usa una fuente que no esté en el catálogo. |
-| 4 | `test_rechazar_confianza_fuera_de_rango` | `api/services/profile_service.py::record_attribute` | Usa una confianza fuera del rango permitido. |
-| 5 | `test_consultar_atributos_de_entidad` | `api/services/profile_service.py::get_entity_attributes` | Guarda atributos y mira qué devuelve la consulta. |
-| 6 | `test_eliminar_atributos_de_entidad` | `api/services/profile_service.py::delete_entity_attributes` | Guarda, borra y mira qué devuelve. |
-| 7 | `test_registrar_evento_valido` | `api/services/event_service.py::track_event` | Mira qué se crea al registrar un evento permitido. |
-| 8 | `test_evento_desconocido_no_rompe` | `api/services/event_service.py::track_event` | Mira qué devuelve con un evento que no existe. |
-| 9 | `test_registrar_clic_en_recomendacion` | `api/services/recommendation_service.py::track_recommendation_click` | Mira qué se registra al marcar un clic. |
-| 10 | `test_respetar_limite_de_recomendaciones` | `api/services/recommendation_service.py::generate_recommendations` | Pide más de los permitidos y cuenta cuántos vuelven. |
-
----
-
-## Prohibiciones
-
-- `assert True`, `assert 1`, `assert resultado is not None` o cualquier aserción
-  que siempre pase.
-- Pruebas vacías, con `pass` o solo con `print`.
-- Copiar una prueba de otro integrante, aunque se cambien los nombres.
-- Probar la función con `mock` de la propia función que se evalúa.
-- Depender de internet, del correo real o de la base de datos de producción.
-- Dejar pruebas sin docstring o con etiquetas diferentes.
-- Renombrar las pruebas del contrato o agregar pruebas que no estén en él.
-
-## Cómo se valida
-
-Antes de entregar, ejecuta:
+## 4. Antes de entregar
 
 ```powershell
 .\venv\Scripts\python.exe scripts\check_test_duplicates.py
-.\venv\Scripts\python.exe scripts\check_entrega_equipo.py
+.\venv\Scripts\python.exe scripts\check_entrega_equipo.py --solo-pendientes
+.\venv\Scripts\python.exe scripts\mutar_entrega.py --integrante sebastian --ronda base
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
 ```
 
-El pipeline ejecuta lo mismo y bloquea el Pull Request si algo falla.
+Cambia `sebastian` por `kevin` según el caso.
 
-## Cómo se llena el Excel
+## 5. Entrega
 
-El archivo de evidencia **no se llena a mano**. Cuando tu entrega cumple el
-contrato y las pruebas pasan, se registra con:
+No tienes permiso de escritura en `Ricy24/plomaap_django`:
 
-```powershell
-.\venv\Scripts\python.exe scripts\registrar_entrega.py --integrante sebastian
-.\venv\Scripts\python.exe scripts\registrar_entrega.py --integrante kevin
-```
+1. Entra al repositorio y pulsa **Fork**.
+2. En tu fork, crea una rama: `pruebas/tu-nombre`.
+3. Sube **solo tu archivo**.
+4. Abre un **Pull Request** desde tu fork hacia `main`.
+5. El PR queda bloqueado hasta que pasen los checks y el responsable lo apruebe.
 
-El script valida el contrato, ejecuta tus pruebas y, solo si todo está bien,
-agrega tus 10 filas al Excel con tu nombre. Si algo falla, **no escribe nada**.
+Si el PR queda en rojo, el detalle aparece en **Checks**. Corrige, sube otra vez
+y espera.
 
-## Cómo se entrega en GitHub
+## 6. Después de aprobado
 
-No tienes permiso de escritura en el repositorio principal. El proceso es:
+El Excel de evidencia lo genera el sistema. No lo llenas tú. Tus 10 filas
+aparecen con tu nombre en el informe de entrega.
 
-1. Haz un **fork** de `Ricy24/plomaap_django`.
-2. Crea una rama con tu nombre en tu fork.
-3. Sube tu archivo a **tu fork**.
-4. Abre un Pull Request desde tu fork hacia `main`.
-5. Espera: las pruebas deben pasar y el responsable debe aprobar.
+## 7. Si te trabas
 
-Nada entra al repositorio sin pasar por ese proceso.
-
-## Defensa oral
-
-La entrega no termina con el PR aprobado. En la evaluación se elegirán **3 pruebas
-al azar** de tu archivo y deberás explicar, sin leer el código:
-
-- qué datos de entrada usaste y por qué,
-- qué hace la función del proyecto que estás probando,
-- qué pasaría si esa función se rompe,
-- por qué tu aserción detecta el error.
-
-Si no puedes explicar una prueba, esa prueba no cuenta.
+En [`RECURSOS.md`](RECURSOS.md) hay documentación y videos por tema. No hay
+ayuda sobre las respuestas: solo sobre cómo se escribe una prueba.
