@@ -23,3 +23,9 @@ if os.getenv('TEST_USE_CONFIGURED_DB', '').lower() not in {'1', 'true', 'yes', '
 MAIL_USERNAME = ''
 MAIL_PASSWORD = ''
 EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
+# Tests must be hermetic: never call Voyage, Gemini or Google over the network.
+# The local embedding provider is deterministic and has no external dependency.
+VOYAGE_API_KEY = ''
+GEMINI_API_KEY = ''
+EMBEDDING_PROVIDER = 'local'

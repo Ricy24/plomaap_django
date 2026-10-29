@@ -1,0 +1,20 @@
+# Hooks locales. Instalar con: pre-commit install
+# Requiere: pip install pre-commit
+repos:
+  - repo: local
+    hooks:
+      - id: pruebas-duplicadas
+        name: pruebas duplicadas
+        entry: python scripts/check_test_duplicates.py
+        language: system
+        pass_filenames: false
+      - id: contrato-entregas
+        name: contrato de entregas
+        entry: python scripts/check_entrega_equipo.py
+        language: system
+        pass_filenames: false
+      - id: ruff
+        name: ruff
+        entry: ruff check .
+        language: system
+        pass_filenames: false

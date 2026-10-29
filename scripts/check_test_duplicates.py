@@ -3,11 +3,15 @@
 """Impide que se entreguen pruebas repetidas en api/tests/unit/equipo.
 
 Falla (exit code 1) si encuentra:
-  - Dos funciones de prueba con el mismo nombre en archivos distintos.
-  - Dos funciones de prueba con el mismo cuerpo (aunque cambie el nombre).
+
+  - dos funciones de prueba con el mismo nombre dentro de la misma carpeta de
+    integrante;
+  - dos funciones de prueba con el mismo cuerpo en cualquier carpeta, aunque se
+    renombren las variables.
 
 El cuerpo se compara ignorando el docstring, los comentarios y los nombres de
-los decoradores, para detectar copias aunque se renombren las variables.
+las variables locales. Los nombres pueden repetirse entre integrantes porque
+pytest los identifica por ruta, pero no dentro de la misma entrega.
 """
 from __future__ import annotations
 
@@ -20,7 +24,6 @@ BASE = Path(__file__).resolve().parent.parent / "api" / "tests" / "unit" / "equi
 
 
 def _cuerpo(funcion: ast.FunctionDef) -> list[ast.stmt]:
-    """Devuelve las sentencias de la función sin su docstring."""
     cuerpo = list(funcion.body)
     if (
         cuerpo
@@ -50,8 +53,6 @@ def _firma(funcion: ast.FunctionDef) -> str:
         if isinstance(nodo, ast.Name) and isinstance(nodo.ctx, ast.Store):
             locales.add(nodo.id)
 
-    # Solo se normalizan las variables locales: los nombres de las funciones
-    # del proyecto se conservan para no confundir pruebas diferentes.
     for nodo in ast.walk(modulo):
         if isinstance(nodo, ast.Name) and nodo.id in locales:
             nodo.id = "_v"
@@ -62,13 +63,21 @@ def _firma(funcion: ast.FunctionDef) -> str:
     return hashlib.sha256(texto.encode("utf-8")).hexdigest()
 
 
+def _archivos() -> list[Path]:
+    return sorted(
+        archivo
+        for archivo in BASE.rglob("test_*.py")
+        if "__pycache__" not in archivo.parts
+    )
+
+
 def main() -> int:
-    archivos = sorted(BASE.glob("test_*.py"))
+    archivos = _archivos()
     if not archivos:
         print(f"[duplicados] No hay archivos en {BASE}")
         return 0
 
-    nombres: dict[str, str] = {}
+    nombres: dict[tuple[str, str], str] = {}
     firmas: dict[str, tuple[str, str]] = {}
     errores: list[str] = []
     total = 0
@@ -77,8 +86,10 @@ def main() -> int:
         try:
             arbol = ast.parse(archivo.read_text(encoding="utf-8"))
         except SyntaxError as exc:
-            errores.append(f"{archivo.name}: error de sintaxis ({exc})")
+            errores.append(f"{archivo.relative_to(BASE)}: error de sintaxis ({exc})")
             continue
+
+        carpeta = archivo.parent.name
 
         for nodo in arbol.body:
             if not isinstance(nodo, (ast.FunctionDef, ast.AsyncFunctionDef)):
@@ -87,14 +98,15 @@ def main() -> int:
                 continue
 
             total += 1
+            clave_nombre = (carpeta, nodo.name)
 
-            if nodo.name in nombres:
+            if clave_nombre in nombres:
                 errores.append(
-                    f"Nombre repetido: {nodo.name} aparece en "
-                    f"{nombres[nodo.name]} y en {archivo.name}"
+                    f"Nombre repetido en {carpeta}: {nodo.name} aparece en "
+                    f"{nombres[clave_nombre]} y en {archivo.name}"
                 )
             else:
-                nombres[nodo.name] = archivo.name
+                nombres[clave_nombre] = archivo.name
 
             firma = _firma(nodo)
             if firma in firmas:

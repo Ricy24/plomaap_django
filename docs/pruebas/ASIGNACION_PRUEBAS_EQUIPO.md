@@ -1,182 +1,79 @@
-# Asignación de pruebas unitarias por integrante
+# Asignación de pruebas por integrante
 
-Estado actual: **20 pruebas entregadas** (Andrés Durán y Dairon Salazar) y
-**20 pendientes** (Sebastián Samacá y Kevin Pinzón).
+Cada integrante tiene una carpeta propia. Así trabajan en paralelo sin pisarse
+y el pipeline identifica la entrega por ruta.
 
-Cada integrante tiene su propio archivo, así que pueden trabajar en paralelo sin
-pisarse ni generar conflictos en Git.
+```text
+api/tests/unit/equipo/
+  integrante_1_validaciones/   Andrés Durán
+    test_integrante_1_validaciones.py   (base, entregada)
+    test_reto_avanzado.py               (avanzada, pendiente)
+  integrante_2_seguridad/      Sebastián Samacá
+    test_integrante_2_seguridad.py      (base, pendiente)
+    test_reto_avanzado.py               (avanzada, pendiente)
+  integrante_3_citas/          Dairon Salazar
+    test_integrante_3_citas.py          (base, entregada)
+    test_reto_avanzado.py               (avanzada, pendiente)
+  integrante_4_datos/          Kevin Pinzón
+    test_integrante_4_datos.py          (base, pendiente)
+    test_reto_avanzado.py               (avanzada, pendiente)
+```
 
-## Resumen de la división
+## Estado
 
-| Integrante | Archivo | Módulo que prueba | Pruebas | Estado |
-|---|---|---|---:|---|
-| Andrés Durán | `api/tests/unit/equipo/test_integrante_1_validaciones.py` | `api/utils/validators.py` | 10 | Entregado |
-| Sebastián Samacá | `api/tests/unit/equipo/test_integrante_2_seguridad.py` | `api/utils/jwt_utils.py` + `api/utils/decorators.py` | 10 | **Pendiente** |
-| Dairon Salazar | `api/tests/unit/equipo/test_integrante_3_citas.py` | `api/services/appointment_service.py` | 10 | Entregado |
-| Kevin Pinzón | `api/tests/unit/equipo/test_integrante_4_datos.py` | `profile_service` + `event_service` + `recommendation_service` | 10 | **Pendiente** |
-| **Total** | | | **40** | **20 entregadas** |
+| Integrante | Base | Avanzada | Total |
+|---|---|---|---:|
+| Andrés Durán | Entregada (10) | Pendiente (5) | 15 |
+| Sebastián Samacá | Pendiente (10) | Pendiente (5) | 15 |
+| Dairon Salazar | Entregada (10) | Pendiente (5) | 15 |
+| Kevin Pinzón | Pendiente (10) | Pendiente (5) | 15 |
 
-> La suite histórica de regresión sigue viviendo en `api/tests/unit/utils/` y
-> `api/tests/unit/services/` (470 casos). La carpeta `equipo/` es la entrega
-> identificable de los integrantes.
+- Ronda base: [`CONTRATO_PRUEBAS_PENDIENTES.md`](CONTRATO_PRUEBAS_PENDIENTES.md)
+- Ronda avanzada: [`RETO_AVANZADO.md`](RETO_AVANZADO.md)
 
 ## Cómo ejecutar
 
-Desde la raíz del proyecto:
-
 ```powershell
-# Las pruebas entregadas (20)
+# Solo las entregas del equipo
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
 
-# Solo una entrega
-.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo\test_integrante_1_validaciones.py -q
-.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo\test_integrante_3_citas.py -q
+# Una carpeta
+.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo\integrante_2_seguridad -q
 
-# Toda la suite unitaria (entrega + regresión)
+# Suite unitaria completa (regresión + equipo)
 .\venv\Scripts\python.exe -m pytest -m unit -q
 ```
 
-Resultado real del **28/10/2026**:
+## Reglas de oro
 
-```text
-pytest api\tests\unit\equipo -q      -> 20 passed
-pytest -m unit -q                    -> 490 passed, 34 deselected
-```
+1. **Archivo y nombres fijos**: no cambies rutas ni nombres de pruebas.
+2. **Sin copias**: el pipeline rechaza nombres repetidos dentro de una carpeta y
+   cuerpos idénticos en cualquier carpeta.
+3. **Sin atajos**: no se permiten mocks, `skip`, `xfail`, `parametrize`, `random`
+   ni leer el código fuente en tiempo de ejecución.
+4. **Dos motores, tres bases**: SQLite, PostgreSQL y MySQL. GitHub levanta cada
+   base; el integrante no instala nada.
+5. **Roturas**: la entrega debe detectar fallos inyectados (60 % base, 70 %
+   avanzada). Una prueba que solo verifica que "no explota" no detecta nada.
+6. **Evidencia automática**: el Excel no se llena a mano. El job `informe` genera
+   `informe_entrega.xlsx` con las filas aprobadas.
 
-## Reglas para las entregas pendientes
+## Evidencia
 
-El contrato cerrado que deben cumplir está en
-[`CONTRATO_PRUEBAS_PENDIENTES.md`](CONTRATO_PRUEBAS_PENDIENTES.md).
-Resumen:
-
-1. **Archivo propio**: cada integrante crea su archivo en `api/tests/unit/equipo/`.
-2. **10 pruebas del contrato**: los nombres de prueba están fijados y no se pueden
-   cambiar; tampoco se admiten pruebas extra.
-3. **Docstring obligatorio** con `Caso:`, `Entrada:`, `Esperado:` y `Cubre:`; el
-   `Cubre:` debe apuntar al símbolo exacto del contrato y la prueba debe usar ese
-   símbolo en su código.
-4. **Sin repetidas**: el pipeline falla si detecta nombres de prueba duplicados o
-   cuerpos idénticos dentro de `equipo/`.
-5. **Sin copiar**: cada prueba debe apuntar a su módulo asignado y usar sus propios
-   datos; no se aceptan copias de otra entrega con el nombre cambiado.
-6. **Entrega por Pull Request**: se abre un PR hacia `main` y lo revisa el
-   responsable del repositorio. Nadie puede mergear su propio PR.
-7. **Registro de evidencia**: el Excel no se llena a mano. Solo se registra cuando
-   la entrega cumple el contrato y las pruebas pasan:
-   `scripts/registrar_entrega.py --integrante sebastian|kevin`.
-
-Validación local antes de entregar:
-
-```powershell
-.\venv\Scripts\python.exe scripts\check_test_duplicates.py
-.\venv\Scripts\python.exe scripts\check_entrega_equipo.py
-.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
-```
-
-## Integrante 1 - Validaciones de entrada
-
-Archivo: `test_integrante_1_validaciones.py`
-Funciones puras: no usan base de datos ni red.
-
-| # | Prueba | Qué verifica |
+| Archivo | Contenido | Visibilidad |
 |---|---|---|
-| 1 | `test_email_valido` | Acepta `carlos@plomaap.com` |
-| 2 | `test_email_sin_arroba_es_invalido` | Rechaza un correo sin `@` |
-| 3 | `test_password_de_ocho_caracteres_es_valida` | Acepta exactamente 8 caracteres |
-| 4 | `test_password_corta_es_invalida` | Rechaza una contraseña de 4 caracteres |
-| 5 | `test_telefono_valido` | Acepta `+573001234567` |
-| 6 | `test_telefono_con_letras_es_invalido` | Rechaza letras en el teléfono |
-| 7 | `test_nombre_de_un_caracter_es_invalido` | Exige mínimo 2 caracteres |
-| 8 | `test_fecha_y_hora_validas` | Acepta `2026-11-02` y `09:30` |
-| 9 | `test_fecha_con_formato_incorrecto_es_invalida` | Rechaza `02/11/2026` |
-| 10 | `test_rol_valido` | Acepta el rol `technician` |
+| `docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx` | Base con las 20 pruebas base entregadas (`UNIT-001` a `UNIT-020`) | Repositorio |
+| `docs/.interno/Plan_de_Pruebas_PlomApp_SENA.xlsx` | Original con los 470 casos de regresión | Local, ignorado por Git |
+| `informe_entrega.xlsx` | Informe generado por el pipeline | Artefacto de GitHub Actions |
 
-## Integrante 2 - Seguridad y sesión (PENDIENTE)
+El original de 470 casos **no se publica** y no se edita. El informe se regenera
+desde la base de entrega y las pruebas que hayan cumplido todo.
 
-Archivo a crear: `test_integrante_2_seguridad.py`
-Módulos asignados: `api/utils/jwt_utils.py` y `api/utils/decorators.py`
+## Reparto para la exposición
 
-Debe entregar 10 pruebas propias sobre, como mínimo:
-
-- Generación y validación de tokens JWT.
-- Lectura del encabezado `Authorization: Bearer <token>`.
-- Rechazo de tokens alterados o vencidos.
-- Comportamiento de los decoradores `jwt_required`, `admin_only` y `jwt_optional`.
-- Códigos de respuesta `401` y `403`.
-
-Las pruebas deben usar `RequestFactory` y no levantar el servidor.
-
-## Integrante 3 - Citas y disponibilidad
-
-Archivo: `test_integrante_3_citas.py`
-Usa SQLite en memoria y las fábricas de `api/tests/factories.py`.
-
-| # | Prueba | Qué verifica |
+| Integrante | Tema | Pregunta que debe responder |
 |---|---|---|
-| 1 | `test_pendiente_puede_pasar_a_agendada` | `pending -> scheduled` es válido |
-| 2 | `test_agendada_puede_pasar_a_en_progreso` | `scheduled -> in_progress` es válido |
-| 3 | `test_cita_completada_no_puede_cancelarse` | `completed` es estado final |
-| 4 | `test_cita_cancelada_no_puede_reabrirse` | `cancelled` es estado final |
-| 5 | `test_fecha_invalida_no_genera_horarios` | Fecha mal formada -> lista vacía |
-| 6 | `test_usuario_que_no_es_tecnico_no_tiene_horarios` | Un cliente no tiene agenda |
-| 7 | `test_jornada_laboral_genera_diez_franjas` | De 8:00 a 18:00 hay 10 franjas |
-| 8 | `test_hora_ocupada_no_se_ofrece` | Una cita activa bloquea su hora |
-| 9 | `test_tecnico_libre_esta_disponible` | Técnico libre -> disponible |
-| 10 | `test_tecnico_fuera_de_horario_no_esta_disponible` | A las 7:00 no atiende |
-
-## Integrante 4 - Perfil, eventos y recomendaciones (PENDIENTE)
-
-Archivo a crear: `test_integrante_4_datos.py`
-Módulos asignados: `profile_service`, `event_service` y `recommendation_service`
-
-Debe entregar 10 pruebas propias sobre, como mínimo:
-
-- Registro y actualización de atributos del perfil.
-- Validación de fuente y de rango de confianza.
-- Borrado de atributos de una entidad.
-- Registro de eventos válidos e inválidos (modo normal y estricto).
-- Clic en una recomendación.
-- Límite de resultados en `generate_recommendations`.
-
-## Evidencia para la entrega
-
-Archivos en `docs/pruebas/`:
-
-| Archivo | Contenido |
-|---|---|
-| `Plan_de_Pruebas_PlomApp_SENA.xlsx` | Original con los 470 casos de regresión (no se modificó) |
-| `Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx` | **Entrega**: las 20 pruebas de Andrés y Dairon (`UNIT-001` a `UNIT-020`) |
-
-En la copia, la hoja **Control y Resumen** tiene los nombres de quienes ya
-entregaron en "Aprendices / Equipo de Pruebas". La hoja **Pruebas Unitarias**
-incluye la columna **Responsable / Integrante**:
-
-| Integrante | Casos en el Excel | Estado |
-|---|---|---|
-| Andrés Durán | `UNIT-001` a `UNIT-010` | Entregado |
-| Dairon Salazar | `UNIT-011` a `UNIT-020` | Entregado |
-| Sebastián Samacá | — | Pendiente |
-| Kevin Pinzón | — | Pendiente |
-
-Cada integrante debe adjuntar la salida de su archivo, por ejemplo:
-
-```text
-api/tests/unit/equipo/test_integrante_1_validaciones.py .......... [100%]
-10 passed
-```
-
-Y el consolidado de lo entregado:
-
-```text
-api/tests/unit/equipo ............................................ [100%]
-20 passed
-```
-
-## Reparto sugerido para la exposición
-
-| Integrante | Tema | Pregunta que debe poder responder |
-|---|---|---|
-| Andrés Durán | Validaciones | ¿Qué datos rechaza el registro y por qué? |
-| Sebastián Samacá | Seguridad | ¿Cómo se protege una vista y qué pasa sin token? |
-| Dairon Salazar | Citas | ¿Cómo se evita que dos citas ocupen la misma hora? |
-| Kevin Pinzón | Datos | ¿Cómo se guarda el perfil y qué pasa con un evento inválido? |
+| Andrés Durán | Búsqueda y validaciones | ¿Cómo se normaliza una consulta y cómo se detecta un activo? |
+| Sebastián Samacá | Seguridad y embeddings | ¿Qué pasa con un token vencido y con un vector de otra dimensión? |
+| Dairon Salazar | Citas y recomendaciones | ¿Cómo se evita una doble reserva y cómo se penaliza un servicio reciente? |
+| Kevin Pinzón | Perfil y eventos | ¿Cómo se guarda un atributo y qué pasa con un evento inválido? |
