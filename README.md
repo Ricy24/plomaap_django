@@ -10,6 +10,27 @@ texto. El frontend React **no necesita ningún cambio**.
 > Django (`/admin/`) ni autenticación por sesiones. Toda la autenticación es
 > JWT y la interfaz de usuario es el frontend React. Ver [Seguridad](#seguridad).
 
+## Equipo: entrega de pruebas unitarias
+
+Si eres integrante del equipo, **empieza por tu carpeta**:
+
+| Integrante | Carpeta | Instrucciones |
+|---|---|---|
+| Andrés Durán | `api/tests/unit/equipo/integrante_1_validaciones/` | [`LEEME.md`](api/tests/unit/equipo/integrante_1_validaciones/LEEME.md) |
+| Sebastián Samacá | `api/tests/unit/equipo/integrante_2_seguridad/` | [`LEEME.md`](api/tests/unit/equipo/integrante_2_seguridad/LEEME.md) |
+| Dairon Salazar | `api/tests/unit/equipo/integrante_3_citas/` | [`LEEME.md`](api/tests/unit/equipo/integrante_3_citas/LEEME.md) |
+| Kevin Pinzón | `api/tests/unit/equipo/integrante_4_datos/` | [`LEEME.md`](api/tests/unit/equipo/integrante_4_datos/LEEME.md) |
+
+Documentos clave:
+
+- [`docs/pruebas/PASO_A_PASO.md`](docs/pruebas/PASO_A_PASO.md): qué hacer, en orden.
+- [`docs/pruebas/COMO_SUBIR.md`](docs/pruebas/COMO_SUBIR.md): fork, rama, commit y PR.
+- [`docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md`](docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md): ronda base.
+- [`docs/pruebas/RETO_AVANZADO.md`](docs/pruebas/RETO_AVANZADO.md): ronda avanzada.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md): reglas para contribuir.
+
+No hay respuestas en el repositorio: las pruebas se deducen leyendo el código.
+
 ## Requisitos
 
 - Python 3.12+ (Django 6.1.2 requiere `>=3.12`)
@@ -126,7 +147,7 @@ El backend escucha en el **puerto 5000**, igual que Flask (el frontend asume
 # Unitarias (SQLite en memoria)
 .\venv\Scripts\python.exe -m pytest -m unit -q
 
-# Entrega del equipo: 20 pruebas entregadas (10 por integrante activo)
+# Entregas del equipo (base + avanzadas presentes)
 .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
 
 # Cobertura de la capa unitaria (api/utils + api/services)
@@ -139,74 +160,59 @@ $env:TEST_USE_CONFIGURED_DB = '1'
 .\venv\Scripts\python.exe -m pytest -m integration -q --create-db
 Remove-Item Env:TEST_USE_CONFIGURED_DB
 
-# Suite completa
-.\venv\Scripts\python.exe -m pytest -q
+# Verificación completa antes de subir
+.\venv\Scripts\python.exe scripts\verificar_todo.py
 ```
 
-Resultado real de la suite unitaria:
+Estado actual:
 
-- **490 casos aprobados** (363 funciones de prueba, varias parametrizadas):
-  470 de regresión + **20 de la entrega por integrantes**.
+- **490 casos unitarios aprobados** (363 funciones, varias parametrizadas):
+  470 de regresión + **20 de la entrega base**.
+- **20 pruebas avanzadas pendientes** (5 por integrante). Cuando se entreguen,
+  la suite sube a 510.
 - **100 % de cobertura** sobre `api/utils` + `api/services`: 1243 sentencias,
-  0 sin cubrir.
-- Red, SMTP, Gemini y Voyage están simulados con `unittest.mock`; los servicios
-  que usan modelos corren sobre SQLite en memoria.
+  0 sin cubrir. El pipeline falla si baja.
+- SQLite, PostgreSQL 17 + pgvector y MySQL 8.4 se prueban en CI.
 
-Integración real con PostgreSQL + pgvector (contenedor desechable, 27/10/2026):
+Integración real con PostgreSQL + pgvector (contenedor desechable):
 
 - **8 pruebas de integración aprobadas**, incluidas `select_for_update` y
   `vector(512)` con índice HNSW.
 - **18 pruebas aprobadas** al ejecutar todo `api/tests/integration` (integración
   + contrato de API).
-- Django creó y destruyó `test_plomapp_test`; la base real no se tocó y el
-  contenedor temporal se eliminó al finalizar. Ver
-  [`TESTING.md`](TESTING.md#contenedor-desechable-prueba-satisfactoria).
+- Django crea y destruye la base de pruebas; la base real no se toca. Ver
+  [`TESTING.md`](TESTING.md).
 
 ### Organización de las pruebas unitarias
 
-Las pruebas están separadas por módulo, no en un solo archivo:
+Cada integrante tiene su carpeta. Las pruebas de regresión siguen separadas por
+módulo:
 
-```
+```text
 api/tests/unit/
-  equipo/                        # entrega: 20 pruebas (10 por integrante)
-    test_integrante_1_validaciones.py
-    test_integrante_3_citas.py
-                                 # pendientes: test_integrante_2_seguridad.py
-                                 #             test_integrante_4_datos.py
-  utils/                         # una función por archivo
-    test_validators_email.py
-    test_validators_phone.py
-    test_validators_password.py
-    test_validators_name.py
-    test_validators_date_time.py
-    test_validators_catalogs.py
-    test_jwt_utils.py
-    test_request_utils.py
-    test_dispatch.py
-    test_decorators.py
-    test_email_utils.py
-  services/                      # un servicio por archivo
-    test_appointment_service.py
-    test_embedding_provider.py
-    test_embedding_service.py
-    test_event_service.py
-    test_hybrid_search_service.py
-    test_nlu_service.py
-    test_onboarding_service.py
-    test_profile_service.py
-    test_recommendation_service.py
+  equipo/
+    integrante_1_validaciones/   Andrés Durán
+    integrante_2_seguridad/      Sebastián Samacá
+    integrante_3_citas/          Dairon Salazar
+    integrante_4_datos/          Kevin Pinzón
+  utils/                         una función/helper por archivo
+  services/                      un servicio por archivo
 ```
 
-El detalle de cada caso está en la hoja **Pruebas Unitarias** del Excel
-[`docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA.xlsx)
-(casos `UNIT-001` a `UNIT-470`, uno por variante realmente ejecutada).
-La división de las pruebas de la entrega está en
-[`docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md`](docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md)
-y en la copia
-[`Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx`](docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx),
-que contiene las 20 pruebas entregadas (`UNIT-001` a `UNIT-020`) sin modificar
-el original de 470 casos. Las otras 20 quedan pendientes de entrega por sus
-responsables.
+Contratos y estado:
+
+- [`docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md`](docs/pruebas/ASIGNACION_PRUEBAS_EQUIPO.md)
+- [`docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md`](docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md)
+- [`docs/pruebas/RETO_AVANZADO.md`](docs/pruebas/RETO_AVANZADO.md)
+
+Evidencia:
+
+- `docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx`: 20 pruebas
+  base (`UNIT-001` a `UNIT-020`), versionada.
+- `docs/.interno/Plan_de_Pruebas_PlomApp_SENA.xlsx`: 470 casos de regresión,
+  **local e ignorado por Git**.
+- `informe_entrega.xlsx`: lo genera el pipeline con las rondas aprobadas.
+
 Ver [`TESTING.md`](TESTING.md) para los comandos y la matriz completa.
 
 ## Estructura

@@ -1,20 +1,27 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Valida la entrega de los integrantes 2 y 4 contra el contrato del proyecto.
+"""Valida las entregas del equipo contra el contrato cerrado.
 
-Contrato: docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md
+Fuente de verdad: ``scripts/especificaciones_entrega.py``.
+Contratos publicos: ``docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md`` y
+``docs/pruebas/RETO_AVANZADO.md``.
 
-Si el archivo todavía no existe, lo reporta como pendiente y no falla. Cuando
+Si un archivo todavia no existe, lo reporta como pendiente y no falla. Cuando
 existe, exige:
 
-  - exactamente las 10 pruebas del contrato, con esos nombres;
-  - que cada prueba cubra el símbolo indicado en el contrato;
+  - exactamente las pruebas del contrato, con esos nombres y sin extras;
   - docstring con Caso / Entrada / Esperado / Cubre;
-  - al menos un assert con comparación real (no `assert True`);
-  - pytestmark = pytest.mark.unit.
+  - ``Cubre:`` = ruta::simbolo, con un modulo asignado y un simbolo real;
+  - que la prueba **llame** al simbolo (o use la constante) en su codigo;
+  - al menos un assert con comparacion real o ``pytest.raises`` especifico;
+  - sin mocks, monkeypatch, skip/xfail, parametrize, random, sleep ni lectura
+    del codigo fuente en tiempo de ejecucion;
+  - maximo de lineas por prueba y minimo de simbolos distintos;
+  - ``pytestmark = pytest.mark.unit``.
 """
 from __future__ import annotations
 
+import argparse
 import ast
 import sys
 from pathlib import Path
@@ -22,136 +29,127 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 EQUIPO = RAIZ / "api" / "tests" / "unit" / "equipo"
 
-# Contrato cerrado: nombres de prueba y símbolo que deben cubrir.
-SPEC = {
-    "test_integrante_2_seguridad.py": {
-        "responsable": "Sebastián Samacá",
-        "precondiciones": (
-            "Sin base de datos ni servidor. Se usa RequestFactory para simular "
-            "la petición cuando la prueba lo requiera."
-        ),
-        "severidad": "Alta",
-        "modulos": {
-            "api/utils/jwt_utils.py",
-            "api/utils/decorators.py",
-        },
-        "tests": {
-            "test_generar_token_devuelve_texto": "api/utils/jwt_utils.py::generate_token",
-            "test_token_contiene_identidad_del_usuario": "api/utils/jwt_utils.py::decode_token",
-            "test_token_alterado_es_rechazado": "api/utils/jwt_utils.py::decode_token",
-            "test_token_expirado_es_rechazado": "api/utils/jwt_utils.py::decode_token",
-            "test_extraer_token_con_bearer": "api/utils/jwt_utils.py::get_token_from_request",
-            "test_extraer_token_sin_encabezado": "api/utils/jwt_utils.py::get_token_from_request",
-            "test_identidad_del_token_es_entero": "api/utils/jwt_utils.py::get_current_user_id",
-            "test_vista_protegida_sin_token_responde_401": "api/utils/decorators.py::jwt_required",
-            "test_vista_de_admin_rechaza_a_un_cliente": "api/utils/decorators.py::admin_only",
-            "test_jwt_optional_permite_peticion_sin_token": "api/utils/decorators.py::jwt_optional",
-        },
-    },
-    "test_integrante_4_datos.py": {
-        "responsable": "Kevin Pinzón",
-        "precondiciones": (
-            "SQLite en memoria (pytest-django) y factories de "
-            "api/tests/factories.py."
-        ),
-        "severidad": "Media",
-        "modulos": {
-            "api/services/profile_service.py",
-            "api/services/event_service.py",
-            "api/services/recommendation_service.py",
-        },
-        "tests": {
-            "test_registrar_atributo_nuevo": "api/services/profile_service.py::record_attribute",
-            "test_actualizar_atributo_existente": "api/services/profile_service.py::record_attribute",
-            "test_rechazar_fuente_desconocida": "api/services/profile_service.py::record_attribute",
-            "test_rechazar_confianza_fuera_de_rango": "api/services/profile_service.py::record_attribute",
-            "test_consultar_atributos_de_entidad": "api/services/profile_service.py::get_entity_attributes",
-            "test_eliminar_atributos_de_entidad": "api/services/profile_service.py::delete_entity_attributes",
-            "test_registrar_evento_valido": "api/services/event_service.py::track_event",
-            "test_evento_desconocido_no_rompe": "api/services/event_service.py::track_event",
-            "test_registrar_clic_en_recomendacion": "api/services/recommendation_service.py::track_recommendation_click",
-            "test_respetar_limite_de_recomendaciones": "api/services/recommendation_service.py::generate_recommendations",
-        },
-    },
-}
+sys.path.insert(0, str(RAIZ / "scripts"))
+from especificaciones_entrega import ENTREGAS, POR_CLAVE, Ronda, iterar_rondas  # noqa: E402
 
 ETIQUETAS = ("Caso:", "Entrada:", "Esperado:", "Cubre:")
-OPERADORES_VALIDOS = (
-    ast.Eq,
-    ast.NotEq,
-    ast.Lt,
-    ast.LtE,
-    ast.Gt,
-    ast.GtE,
-    ast.In,
-    ast.NotIn,
-    ast.Is,
-    ast.IsNot,
+
+PROHIBIDO = (
+    "monkeypatch",
+    "unittest.mock",
+    "from mock",
+    "import mock",
+    "MagicMock",
+    "pytest.skip",
+    "pytest.mark.skip",
+    "pytest.mark.xfail",
+    "parametrize",
+    "random.",
+    "time.sleep",
+    "inspect.getsource",
+    "read_text(",
+    "open(",
 )
 
+EXCEPCIONES_GENERICAS = {"Exception", "BaseException", "object"}
 
-def _simbolos_de(ruta: Path) -> set[str]:
+
+def _simbolos_de(ruta: Path) -> dict[str, str]:
+    """Devuelve ``{nombre: tipo}`` de los simbolos de nivel superior."""
     arbol = ast.parse(ruta.read_text(encoding="utf-8"))
-    nombres: set[str] = set()
+    nombres: dict[str, str] = {}
     for nodo in arbol.body:
-        if isinstance(nodo, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-            nombres.add(nodo.name)
+        if isinstance(nodo, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            nombres[nodo.name] = "funcion"
+        elif isinstance(nodo, ast.ClassDef):
+            nombres[nodo.name] = "clase"
         elif isinstance(nodo, ast.Assign):
             for objetivo in nodo.targets:
                 if isinstance(objetivo, ast.Name):
-                    nombres.add(objetivo.id)
+                    nombres[objetivo.id] = "constante"
         elif isinstance(nodo, ast.AnnAssign) and isinstance(nodo.target, ast.Name):
-            nombres.add(nodo.target.id)
+            nombres[nodo.target.id] = "constante"
     return nombres
 
 
-def _assert_valido(funcion: ast.FunctionDef) -> bool:
-    """Exige un assert con comparación real."""
-    for nodo in ast.walk(funcion):
-        if isinstance(nodo, ast.Assert):
-            valor = nodo.test
-            if isinstance(valor, ast.Compare):
-                if any(isinstance(op, OPERADORES_VALIDOS) for op in valor.ops):
-                    return True
-            if isinstance(valor, ast.Call):
-                # pytest.raises(...) como sentencia/contexto se valida aparte.
-                return True
-    return False
-
-
-def _usa_pytest_raises(funcion: ast.FunctionDef) -> bool:
+def _llamadas(funcion: ast.AST) -> set[str]:
+    nombres: set[str] = set()
     for nodo in ast.walk(funcion):
         if isinstance(nodo, ast.Call):
-            nombre = ""
-            if isinstance(nodo.func, ast.Attribute):
-                nombre = nodo.func.attr
-            elif isinstance(nodo.func, ast.Name):
-                nombre = nodo.func.id
-            if nombre == "raises":
-                return True
-        if isinstance(nodo, ast.With):
-            for item in nodo.items:
-                expr = item.context_expr
-                if isinstance(expr, ast.Call):
-                    nombre = ""
-                    if isinstance(expr.func, ast.Attribute):
-                        nombre = expr.func.attr
-                    elif isinstance(expr.func, ast.Name):
-                        nombre = expr.func.id
-                    if nombre == "raises":
-                        return True
+            if isinstance(nodo.func, ast.Name):
+                nombres.add(nodo.func.id)
+            elif isinstance(nodo.func, ast.Attribute):
+                nombres.add(nodo.func.attr)
+        elif isinstance(nodo, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            for decorador in nodo.decorator_list:
+                if isinstance(decorador, ast.Name):
+                    nombres.add(decorador.id)
+                elif isinstance(decorador, ast.Attribute):
+                    nombres.add(decorador.attr)
+    return nombres
+
+
+def _nombres_usados(funcion: ast.AST) -> set[str]:
+    nombres: set[str] = set()
+    for nodo in ast.walk(funcion):
+        if isinstance(nodo, ast.Name):
+            nombres.add(nodo.id)
+        elif isinstance(nodo, ast.Attribute):
+            nombres.add(nodo.attr)
+    return nombres
+
+
+def _usa_simbolo(funcion: ast.AST, simbolo: str, tipo: str) -> bool:
+    if tipo in {"funcion", "clase"}:
+        return simbolo in _llamadas(funcion)
+    return simbolo in _nombres_usados(funcion)
+
+
+def _assert_valido(funcion: ast.AST) -> tuple[bool, str]:
+    for nodo in ast.walk(funcion):
+        if not isinstance(nodo, ast.Assert):
+            continue
+        prueba = nodo.test
+        if isinstance(prueba, ast.Constant):
+            return False, "no se permite `assert` con una constante"
+        if isinstance(prueba, ast.Compare):
+            return True, ""
+        if isinstance(prueba, ast.Name):
+            return False, "el assert debe comparar, no solo nombrar una variable"
+    return False, "falta un assert con comparacion real"
+
+
+def _raises_especifico(funcion: ast.AST) -> bool:
+    for nodo in ast.walk(funcion):
+        if not isinstance(nodo, ast.Call):
+            continue
+        nombre = ""
+        if isinstance(nodo.func, ast.Attribute):
+            nombre = nodo.func.attr
+        elif isinstance(nodo.func, ast.Name):
+            nombre = nodo.func.id
+        if nombre != "raises" or not nodo.args:
+            continue
+        excepcion = nodo.args[0]
+        if isinstance(excepcion, ast.Name) and excepcion.id in EXCEPCIONES_GENERICAS:
+            continue
+        if isinstance(excepcion, ast.Attribute) and excepcion.attr in EXCEPCIONES_GENERICAS:
+            continue
+        return True
     return False
 
 
-def _docstring_valido(funcion: ast.FunctionDef) -> tuple[bool, str]:
+def _docstring_valido(funcion: ast.AST) -> tuple[bool, str]:
     doc = ast.get_docstring(funcion) or ""
     for etiqueta in ETIQUETAS:
         if etiqueta not in doc:
             return False, f"falta `{etiqueta}` en el docstring"
+    if len(doc.strip()) < 40:
+        return False, "el docstring es demasiado corto para explicar el caso"
     return True, ""
 
 
-def _cubre(funcion: ast.FunctionDef) -> str:
+def _cubre(funcion: ast.AST) -> str:
     doc = ast.get_docstring(funcion) or ""
     for linea in doc.splitlines():
         if linea.strip().startswith("Cubre:"):
@@ -159,28 +157,87 @@ def _cubre(funcion: ast.FunctionDef) -> str:
     return ""
 
 
-def _usa_simbolo(funcion: ast.FunctionDef, simbolo: str) -> bool:
-    """La prueba debe usar de verdad el símbolo que dice cubrir."""
-    for nodo in ast.walk(funcion):
-        if isinstance(nodo, ast.Name) and nodo.id == simbolo:
-            return True
-        if isinstance(nodo, ast.Attribute) and nodo.attr == simbolo:
-            return True
-    return False
+def _modulo_del_simbolo(cubre: str, modulos: tuple[str, ...]) -> str | None:
+    if "::" not in cubre:
+        return None
+    ruta = cubre.split("::")[0].strip().replace("\\", "/")
+    return ruta if ruta in modulos else None
 
 
-def validar(nombre: str) -> list[str]:
-    """Devuelve la lista de errores de un archivo. Vacía = cumple."""
-    regla = SPEC[nombre]
-    archivo = EQUIPO / nombre
+def _validar_funcion(
+    nombre_test: str,
+    funcion: ast.AST,
+    ronda: Ronda,
+    simbolos_modulo: dict[str, dict[str, str]],
+) -> tuple[list[str], str | None]:
+    errores: list[str] = []
+    simbolo_usado: str | None = None
+
+    ok, motivo = _docstring_valido(funcion)
+    if not ok:
+        errores.append(f"{nombre_test}: {motivo}")
+        return errores, None
+
+    cubre = _cubre(funcion)
+    modulo = _modulo_del_simbolo(cubre, ronda.modulos)
+    if modulo is None:
+        errores.append(
+            f"{nombre_test}: `Cubre:` debe apuntar a uno de estos modulos: "
+            + ", ".join(ronda.modulos)
+        )
+        return errores, None
+
+    simbolo = cubre.split("::", 1)[1].strip()
+    if not simbolo:
+        errores.append(f"{nombre_test}: `Cubre:` no indica el simbolo")
+        return errores, None
+
+    tipo = simbolos_modulo[modulo].get(simbolo)
+    if tipo is None:
+        errores.append(f"{nombre_test}: `{simbolo}` no existe en {modulo}")
+        return errores, None
+
+    if not _usa_simbolo(funcion, simbolo, tipo):
+        accion = "llamar" if tipo in {"funcion", "clase"} else "usar"
+        errores.append(
+            f"{nombre_test}: la prueba debe {accion} `{simbolo}` en su propio codigo"
+        )
+
+    if not (_assert_valido(funcion)[0] or _raises_especifico(funcion)):
+        errores.append(
+            f"{nombre_test}: falta un assert con comparacion o un "
+            "`pytest.raises` con una excepcion especifica"
+        )
+
+    lineas = funcion.end_lineno - funcion.lineno + 1
+    if lineas > ronda.max_lineas:
+        errores.append(
+            f"{nombre_test}: tiene {lineas} lineas (maximo {ronda.max_lineas})"
+        )
+
+    if not errores:
+        simbolo_usado = simbolo
+    return errores, simbolo_usado
+
+
+def validar_ronda(entrega_clave: str, ronda_clave: str) -> list[str]:
+    """Devuelve la lista de errores de una ronda. Vacia = cumple."""
+    entrega = POR_CLAVE[entrega_clave]
+    ronda = entrega.ronda(ronda_clave)
+    archivo = RAIZ / entrega.ruta_carpeta / ronda.archivo
     errores: list[str] = []
 
     if not archivo.exists():
-        return [f"no existe {archivo}"]
+        return [f"no existe {archivo.relative_to(RAIZ)}"]
 
     texto = archivo.read_text(encoding="utf-8")
+
     if "pytestmark = pytest.mark.unit" not in texto:
         errores.append("falta `pytestmark = pytest.mark.unit`")
+
+    for palabra in PROHIBIDO:
+        if palabra in texto:
+            errores.append(f"no se permite `{palabra}` en la entrega")
 
     try:
         arbol = ast.parse(texto)
@@ -194,64 +251,82 @@ def validar(nombre: str) -> list[str]:
         and nodo.name.startswith("test_")
     }
 
-    esperadas = list(regla["tests"])
-    faltan = [n for n in esperadas if n not in pruebas]
-    sobran = [n for n in pruebas if n not in regla["tests"]]
-
+    faltan = [n for n in ronda.pruebas if n not in pruebas]
+    sobran = [n for n in pruebas if n not in ronda.pruebas]
     if faltan:
         errores.append("faltan pruebas del contrato: " + ", ".join(faltan))
     if sobran:
-        errores.append("pruebas que no están en el contrato: " + ", ".join(sobran))
+        errores.append("pruebas que no estan en el contrato: " + ", ".join(sobran))
 
-    for nombre_test, destino in regla["tests"].items():
+    simbolos_modulo = {
+        modulo: _simbolos_de(RAIZ / modulo) for modulo in ronda.modulos
+    }
+
+    simbolos: set[str] = set()
+
+    for nombre_test in ronda.pruebas:
         funcion = pruebas.get(nombre_test)
         if funcion is None:
             continue
+        errores_funcion, simbolo = _validar_funcion(
+            nombre_test, funcion, ronda, simbolos_modulo
+        )
+        errores.extend(errores_funcion)
+        if simbolo:
+            simbolos.add(simbolo)
 
-        ok, motivo = _docstring_valido(funcion)
-        if not ok:
-            errores.append(f"{nombre_test}: {motivo}")
-            continue
-
-        cubre = _cubre(funcion)
-        if cubre != destino:
-            errores.append(
-                f"{nombre_test}: `Cubre:` debe ser {destino!r}, está {cubre!r}"
-            )
-
-        ruta_txt = cubre.split("::")[0] if "::" in cubre else cubre
-        if ruta_txt and ruta_txt not in regla["modulos"]:
-            errores.append(
-                f"{nombre_test}: {ruta_txt} no es un módulo asignado"
-            )
-
-        if not (_assert_valido(funcion) or _usa_pytest_raises(funcion)):
-            errores.append(
-                f"{nombre_test}: falta un assert con comparación real o pytest.raises"
-            )
-
-        simbolo = destino.split("::")[1] if "::" in destino else ""
-        if simbolo and not _usa_simbolo(funcion, simbolo):
-            errores.append(
-                f"{nombre_test}: la prueba no usa `{simbolo}` en su código"
-            )
+    if len(simbolos) < ronda.min_simbolos:
+        errores.append(
+            f"debe usar al menos {ronda.min_simbolos} simbolos distintos, "
+            f"usa {len(simbolos)}"
+        )
 
     return errores
 
 
+def _seleccion(integrante: str | None, ronda: str | None, solo_pendientes: bool):
+    if integrante:
+        if integrante not in POR_CLAVE:
+            raise SystemExit(f"Integrante desconocido: {integrante}")
+        entregas = (POR_CLAVE[integrante],)
+    else:
+        entregas = ENTREGAS
+
+    for entrega in entregas:
+        for item in entrega.rondas:
+            if ronda and item.clave != ronda:
+                continue
+            if solo_pendientes and not item.pendiente:
+                continue
+            yield entrega, item
+
+
 def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--integrante", choices=sorted(POR_CLAVE))
+    parser.add_argument("--ronda", choices=("base", "avanzada"))
+    parser.add_argument(
+        "--solo-pendientes",
+        action="store_true",
+        help="Ignora las rondas marcadas como entregadas.",
+    )
+    args = parser.parse_args()
+
     pendientes = 0
     fallos = 0
+    revisadas = 0
 
-    for nombre, regla in SPEC.items():
-        archivo = EQUIPO / nombre
+    for entrega, ronda in _seleccion(args.integrante, args.ronda, args.solo_pendientes):
+        archivo = RAIZ / entrega.ruta_carpeta / ronda.archivo
+        etiqueta = f"{entrega.clave}:{ronda.clave}"
         if not archivo.exists():
             pendientes += 1
-            print(f"[entrega] PENDIENTE: {nombre} ({regla['responsable']})")
+            print(f"[entrega] PENDIENTE {etiqueta} -> {ronda.archivo} ({entrega.responsable})")
             continue
 
-        print(f"[entrega] Revisando {nombre} ({regla['responsable']})")
-        errores = validar(nombre)
+        revisadas += 1
+        print(f"[entrega] Revisando {etiqueta} -> {ronda.archivo} ({entrega.responsable})")
+        errores = validar_ronda(entrega.clave, ronda.clave)
         if errores:
             fallos += 1
             for error in errores:
@@ -262,12 +337,14 @@ def main() -> int:
     if fallos:
         print(
             "\n[entrega] La entrega no cumple. Revisa "
-            "docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md"
+            "docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md y docs/pruebas/RETO_AVANZADO.md"
         )
         return 1
 
-    if pendientes == len(SPEC):
-        print("[entrega] Sin entregas nuevas: no hay nada que validar todavía")
+    if revisadas == 0:
+        print("[entrega] Sin entregas nuevas: no hay nada que validar todavia")
+    elif pendientes:
+        print(f"[entrega] {pendientes} ronda(s) pendiente(s); las existentes cumplen.")
     return 0
 
 

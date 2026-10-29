@@ -1,0 +1,29 @@
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+exclude = [
+    "venv",
+    ".git",
+    "api/migrations",
+    "docs",
+    "backups",
+    "static",
+]
+
+[tool.ruff.lint]
+# Solo errores reales (sintaxis, nombres indefinidos, imports sin usar).
+# No se impone estilo para no reescribir el proyecto de golpe.
+select = ["E9", "F"]
+ignore = ["F401"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*.py" = ["F401"]
+"api/tests/*" = ["F401"]
+
+[tool.coverage.run]
+source = ["api/utils", "api/services"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 100
