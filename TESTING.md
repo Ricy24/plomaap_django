@@ -182,7 +182,7 @@ el pipeline pase**:
 - Se exige resolver las conversaciones antes de mergear.
 - **Se exige la aprobación del responsable** (`.github/CODEOWNERS`): nadie puede
   mergear su propio trabajo.
-- La regla aplica también a los administradores.
+- El administrador conserva la posibilidad de saltarse la regla en una emergencia.
 
 Para revisar o cambiar la configuración:
 
