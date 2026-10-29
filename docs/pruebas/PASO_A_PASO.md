@@ -17,9 +17,9 @@
 
 3. **Calibrar un reto antes de publicarlo**
 
-   La solución de referencia está fuera del repositorio, en
-   `C:\Users\Anrid\plomaap_privado\soluciones`. Cópiala temporalmente a la ruta
-   que espera el pipeline, ejecuta:
+   La solución de referencia está fuera del repositorio, en la carpeta privada
+   del responsable. Cópiala temporalmente a la ruta que espera el pipeline,
+   ejecuta:
 
    ```powershell
    .\venv\Scripts\python.exe scripts\mutar_entrega.py --integrante <clave> --ronda <ronda>
