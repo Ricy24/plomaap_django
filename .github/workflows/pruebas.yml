@@ -47,7 +47,7 @@ jobs:
       - name: Pruebas entregadas del equipo
         run: python -m pytest api/tests/unit/equipo -q
 
-      - name: Suite unitaria completa (490)
+      - name: Suite unitaria completa
         run: python -m pytest -m unit -q
 
   integration-tests:

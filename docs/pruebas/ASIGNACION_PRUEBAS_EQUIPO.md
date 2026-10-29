@@ -45,20 +45,25 @@ pytest -m unit -q                    -> 490 passed, 34 deselected
 
 ## Reglas para las entregas pendientes
 
-El formato exacto que deben cumplir está en
-[`ESPECIFICACION_PRUEBAS_PENDIENTES.md`](ESPECIFICACION_PRUEBAS_PENDIENTES.md).
+El contrato cerrado que deben cumplir está en
+[`CONTRATO_PRUEBAS_PENDIENTES.md`](CONTRATO_PRUEBAS_PENDIENTES.md).
 Resumen:
 
 1. **Archivo propio**: cada integrante crea su archivo en `api/tests/unit/equipo/`.
-2. **10 pruebas que pasen**: no se acepta código que rompa la suite.
+2. **10 pruebas del contrato**: los nombres de prueba están fijados y no se pueden
+   cambiar; tampoco se admiten pruebas extra.
 3. **Docstring obligatorio** con `Caso:`, `Entrada:`, `Esperado:` y `Cubre:`; el
-   `Cubre:` debe apuntar a un símbolo real del módulo asignado.
+   `Cubre:` debe apuntar al símbolo exacto del contrato y la prueba debe usar ese
+   símbolo en su código.
 4. **Sin repetidas**: el pipeline falla si detecta nombres de prueba duplicados o
    cuerpos idénticos dentro de `equipo/`.
 5. **Sin copiar**: cada prueba debe apuntar a su módulo asignado y usar sus propios
    datos; no se aceptan copias de otra entrega con el nombre cambiado.
 6. **Entrega por Pull Request**: se abre un PR hacia `main` y lo revisa el
    responsable del repositorio. Nadie puede mergear su propio PR.
+7. **Registro de evidencia**: el Excel no se llena a mano. Solo se registra cuando
+   la entrega cumple el contrato y las pruebas pasan:
+   `scripts/registrar_entrega.py --integrante sebastian|kevin`.
 
 Validación local antes de entregar:
 

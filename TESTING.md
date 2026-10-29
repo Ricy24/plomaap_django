@@ -85,7 +85,9 @@ los integrantes que ya entregaron y están detalladas en
 La copia con esas 20 pruebas (`UNIT-001` a `UNIT-020`) es
 `docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx`; contiene
 solo lo entregado, mientras que el archivo original conserva los 470
-casos de regresión sin cambios. Las 20 pruebas restantes quedan pendientes.
+casos de regresión sin cambios. Las 20 pruebas restantes quedan pendientes y se
+registran con `scripts/registrar_entrega.py` cuando la entrega cumple el
+[contrato](docs/pruebas/CONTRATO_PRUEBAS_PENDIENTES.md).
 
 ### Entrega por integrantes
 
