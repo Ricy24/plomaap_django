@@ -45,14 +45,28 @@ pytest -m unit -q                    -> 490 passed, 34 deselected
 
 ## Reglas para las entregas pendientes
 
+El formato exacto que deben cumplir está en
+[`ESPECIFICACION_PRUEBAS_PENDIENTES.md`](ESPECIFICACION_PRUEBAS_PENDIENTES.md).
+Resumen:
+
 1. **Archivo propio**: cada integrante crea su archivo en `api/tests/unit/equipo/`.
 2. **10 pruebas que pasen**: no se acepta código que rompa la suite.
-3. **Sin repetidas**: el pipeline falla si detecta nombres de prueba duplicados o
+3. **Docstring obligatorio** con `Caso:`, `Entrada:`, `Esperado:` y `Cubre:`; el
+   `Cubre:` debe apuntar a un símbolo real del módulo asignado.
+4. **Sin repetidas**: el pipeline falla si detecta nombres de prueba duplicados o
    cuerpos idénticos dentro de `equipo/`.
-4. **Sin copiar**: cada prueba debe apuntar a su módulo asignado y usar sus propios
+5. **Sin copiar**: cada prueba debe apuntar a su módulo asignado y usar sus propios
    datos; no se aceptan copias de otra entrega con el nombre cambiado.
-5. **Entrega por Pull Request**: se abre un PR hacia `main` y lo revisa el
+6. **Entrega por Pull Request**: se abre un PR hacia `main` y lo revisa el
    responsable del repositorio. Nadie puede mergear su propio PR.
+
+Validación local antes de entregar:
+
+```powershell
+.\venv\Scripts\python.exe scripts\check_test_duplicates.py
+.\venv\Scripts\python.exe scripts\check_entrega_equipo.py
+.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
+```
 
 ## Integrante 1 - Validaciones de entrada
 

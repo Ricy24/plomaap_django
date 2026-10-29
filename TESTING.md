@@ -170,7 +170,7 @@ manual (`workflow_dispatch`). Tiene dos jobs:
 
 | Job | Qué ejecuta |
 |---|---|
-| `unit-tests` | `scripts/check_test_duplicates.py`, `pytest api/tests/unit/equipo -q` (20) y `pytest -m unit -q` (490) con SQLite en memoria |
+| `unit-tests` | `scripts/check_test_duplicates.py`, `scripts/check_entrega_equipo.py`, `pytest api/tests/unit/equipo -q` (20) y `pytest -m unit -q` (490) con SQLite en memoria |
 | `integration-tests` | `pytest api/tests/integration -q --create-db` contra PostgreSQL 17 + pgvector |
 
 `main` está protegida con estos ajustes, así que **no se puede mergear nada sin que

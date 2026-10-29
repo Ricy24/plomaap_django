@@ -41,6 +41,9 @@ jobs:
       - name: Verificar pruebas no repetidas
         run: python scripts/check_test_duplicates.py
 
+      - name: Verificar formato de las entregas pendientes
+        run: python scripts/check_entrega_equipo.py
+
       - name: Pruebas entregadas del equipo
         run: python -m pytest api/tests/unit/equipo -q
 
