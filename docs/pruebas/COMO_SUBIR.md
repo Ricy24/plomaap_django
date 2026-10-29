@@ -109,8 +109,8 @@ Si algo está en rojo:
 
 ## 9. Revisión y merge
 
-El responsable revisa el PR, hace la defensa oral y, si todo está bien, lo
-mergea. Nadie puede mergear su propio PR.
+El responsable revisa el PR y, si todo está bien, lo mergea. Nadie puede
+mergear su propio PR.
 
 ## Reglas para no perder tiempo
 

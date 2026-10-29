@@ -29,8 +29,7 @@ Documentos clave:
 - [`docs/pruebas/RETO_AVANZADO.md`](docs/pruebas/RETO_AVANZADO.md): ronda avanzada.
 - [`CONTRIBUTING.md`](CONTRIBUTING.md): reglas para contribuir.
 
-No hay respuestas en el repositorio: las pruebas se deducen leyendo el código y
-se defienden oralmente.
+No hay respuestas en el repositorio: las pruebas se deducen leyendo el código.
 
 ## Requisitos
 

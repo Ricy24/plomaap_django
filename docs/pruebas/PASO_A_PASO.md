@@ -64,7 +64,6 @@
    fork y abre un PR hacia `main`. El paso a paso con comandos está en
    [`COMO_SUBIR.md`](COMO_SUBIR.md).
 7. Espera los checks. Si algo está en rojo, corrige y vuelve a subir.
-8. Prepara la defensa: debes explicar cada prueba sin abrir el archivo.
 
 ## Regla de oro
 
