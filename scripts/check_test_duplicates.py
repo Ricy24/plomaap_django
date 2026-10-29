@@ -33,18 +33,32 @@ def _cuerpo(funcion: ast.FunctionDef) -> list[ast.stmt]:
 
 
 def _firma(funcion: ast.FunctionDef) -> str:
-    """Huella del cuerpo, ignorando nombres de variables locales."""
+    """Huella del cuerpo, ignorando solo los nombres de variables locales."""
     cuerpo = _cuerpo(funcion)
-    # Se normalizan los nombres de variables/atributos a un marcador para que
-    # una copia con variables renombradas siga siendo detectada.
-    for nodo in ast.walk(ast.Module(body=cuerpo, type_ignores=[])):
-        if isinstance(nodo, ast.Name):
+    modulo = ast.Module(body=cuerpo, type_ignores=[])
+
+    locales: set[str] = set()
+    for argumento in (
+        funcion.args.posonlyargs + funcion.args.args + funcion.args.kwonlyargs
+    ):
+        locales.add(argumento.arg)
+    if funcion.args.vararg:
+        locales.add(funcion.args.vararg.arg)
+    if funcion.args.kwarg:
+        locales.add(funcion.args.kwarg.arg)
+    for nodo in ast.walk(modulo):
+        if isinstance(nodo, ast.Name) and isinstance(nodo.ctx, ast.Store):
+            locales.add(nodo.id)
+
+    # Solo se normalizan las variables locales: los nombres de las funciones
+    # del proyecto se conservan para no confundir pruebas diferentes.
+    for nodo in ast.walk(modulo):
+        if isinstance(nodo, ast.Name) and nodo.id in locales:
             nodo.id = "_v"
-        elif isinstance(nodo, ast.Attribute):
-            nodo.attr = "_a"
-        elif isinstance(nodo, ast.arg):
+        elif isinstance(nodo, ast.arg) and nodo.arg in locales:
             nodo.arg = "_v"
-    texto = ast.dump(ast.Module(body=cuerpo, type_ignores=[]), annotate_fields=False)
+
+    texto = ast.dump(modulo, annotate_fields=False)
     return hashlib.sha256(texto.encode("utf-8")).hexdigest()
 
 
