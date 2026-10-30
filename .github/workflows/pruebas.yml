@@ -263,10 +263,14 @@ jobs:
           path: docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx
           retention-days: 30
       - name: Guardar Excel actualizado en el repositorio
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.GIT_PUSH_TOKEN != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GIT_PUSH_TOKEN: ${{ secrets.GIT_PUSH_TOKEN }}
         run: |
+          if [ -z "$GIT_PUSH_TOKEN" ]; then
+            echo "GIT_PUSH_TOKEN no configurado: solo se genera el artefacto."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx
