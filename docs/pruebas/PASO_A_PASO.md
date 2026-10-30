@@ -2,20 +2,39 @@
 
 ## Para el responsable
 
-1. **Instalar herramientas**
+### 1. Instalar herramientas
 
-   ```powershell
-   .\venv\Scripts\python.exe -m pip install -r requirements-dev.txt
-   ```
+```powershell
+.\venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+```
 
-2. **Verificar el estado**
+### 2. Verificar el estado
 
-   ```powershell
-   .\venv\Scripts\python.exe scripts\check_entrega_equipo.py
-   .\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
-   ```
+```powershell
+.\venv\Scripts\python.exe scripts\check_entrega_equipo.py
+.\venv\Scripts\python.exe -m pytest api\tests\unit\equipo -q
+```
 
-3. **Calibrar un reto antes de publicarlo**
+### 3. Excel actualizado automáticamente (configuración única)
+
+El job `informe` genera `docs/pruebas/Plan_de_Pruebas_PlomApp_SENA_entrega_equipo.xlsx`
+con las filas de quien cumplió todo y lo guarda en el repositorio automáticamente.
+Para que el commit automático funcione, crea un **Personal Access Token** una sola vez:
+
+1. Ve a **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens**.
+2. Pulsa **Generate new token**.
+3. Nombre: `plomaap-informe`. Expiración: la que prefieras.
+4. Repository access: **Only select repositories** → `Ricy24/plomaap_django`.
+5. Permissions → **Contents: Read and write**.
+6. Genera y **copia el token**.
+7. En el repositorio: **Settings → Secrets and variables → Actions → New repository secret**.
+   - Name: `GIT_PUSH_TOKEN`
+   - Secret: el token copiado.
+
+Sin este token el Excel se sigue generando como artefacto descargable, pero no se
+commitea automáticamente al repositorio.
+
+### 4. Calibrar un reto antes de publicarlo
 
    La solución de referencia está fuera del repositorio, en la carpeta privada
    del responsable. Cópiala temporalmente a la ruta que espera el pipeline,
