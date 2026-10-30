@@ -10,9 +10,10 @@ from api.controllers import passkey_controller as passkey
 from api.models import User
 from api.utils.decorators import jwt_required_custom
 from api.utils.jwt_utils import generate_token
-from api.utils.request_utils import json_body
+from api.utils.rate_limit import rate_limit
 
 
+@rate_limit(requests=10, window=60)
 def google_login(request):
     """POST /api/auth/google-login"""
     data = json_body(request)
@@ -64,11 +65,13 @@ def google_login(request):
         return JsonResponse({'error': 'Invalid Google token'}, status=401)
 
 
+@rate_limit(requests=5, window=60)
 def login_route(request):
     """Login endpoint"""
     return ctrl.login(request)
 
 
+@rate_limit(requests=3, window=300)
 def register_route(request):
     """Register endpoint"""
     return ctrl.register(request)
@@ -92,6 +95,7 @@ def logout(request, user):
     return JsonResponse({'message': 'Logged out successfully'}, status=200)
 
 
+@rate_limit(requests=3, window=300)
 def forgot_password_route(request):
     """Forgot password endpoint"""
     return ctrl.forgot_password(request)
@@ -138,6 +142,7 @@ def verify_email_route(request):
     return ctrl.verify_email(request)
 
 
+@rate_limit(requests=3, window=300)
 def resend_verification_route(request):
     """Resend email verification code"""
     return ctrl.resend_verification(request)

@@ -5,10 +5,51 @@ matching the Flask API contract consumed by the React frontend.
 """
 import json
 import logging
+import time
 
 from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
+security_logger = logging.getLogger("security")
+
+
+class SecurityLoggingMiddleware:
+    """Registra solicitudes sospechosas (401, 403, 404, 429, 500) con IP,
+    ruta, método y user-agent. Ayuda a detectar escaneos y ataques.
+
+    Las solicitudes exitosas (2xx, 3xx) no se registran para no saturar los logs.
+    """
+
+    SUSPICIOUS_STATUSES = {400, 401, 403, 404, 429, 500}
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        start = time.monotonic()
+        response = self.get_response(request)
+        elapsed = time.monotonic() - start
+
+        if response.status_code in self.SUSPICIOUS_STATUSES:
+            ip = self._client_ip(request)
+            security_logger.warning(
+                "%s %s %d %.0fms ip=%s ua=%s",
+                request.method,
+                request.path,
+                response.status_code,
+                elapsed * 1000,
+                ip,
+                (request.META.get("HTTP_USER_AGENT") or "-")[:200],
+            )
+
+        return response
+
+    @staticmethod
+    def _client_ip(request):
+        forwarded = request.META.get("HTTP_X_FORWARDED_FOR")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+        return request.META.get("REMOTE_ADDR", "unknown")
 
 
 def _body(error, message):

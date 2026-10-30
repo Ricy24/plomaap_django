@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'api.middleware.JSONErrorMiddleware',
+    'api.middleware.SecurityLoggingMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -282,3 +283,42 @@ if not DEBUG:
             'Con DEBUG=False debes definir SECRET_KEY y JWT_SECRET_KEY reales '
             '(no los valores de ejemplo) en el .env.'
         )
+# Cache para rate limiting y sesiones (LocMem en desarrollo; Redis en producción).
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'plomapp-cache',
+    }
+}
+
+# Logging de seguridad: registra solicitudes sospechosas (401, 403, 404, 429, 500).
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'security': {
+            'format': '[%(asctime)s] %(levelname)s security: %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'security_console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'security',
+        },
+    },
+    'loggers': {
+        'security': {
+            'handlers': ['security_console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
+    },
+}
