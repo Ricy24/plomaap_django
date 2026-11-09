@@ -10,6 +10,12 @@ texto. El frontend React **no necesita ningún cambio**.
 > Django (`/admin/`) ni autenticación por sesiones. Toda la autenticación es
 > JWT y la interfaz de usuario es el frontend React. Ver [Seguridad](#seguridad).
 
+## Documentación de despliegue
+
+- [`docs/despliegue/DESPLIEGUE_COMPLETO.md`](docs/despliegue/DESPLIEGUE_COMPLETO.md): guía completa del despliegue en **AWS + Neon + Vercel** (arquitectura, comandos, archivos, configuraciones y solución de problemas).
+- [`docs/despliegue/aws/`](docs/despliegue/aws/): copias de nginx, systemd y script de referencia.
+- [`docs/despliegue/vercel/`](docs/despliegue/vercel/): `index.py`, `vercel.json` y variables de entorno usadas en Vercel.
+
 ## Equipo: entrega de pruebas unitarias
 
 Si eres integrante del equipo, **empieza por tu carpeta**:

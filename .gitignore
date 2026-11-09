@@ -45,3 +45,9 @@ docs/.interno/
 
 # Migraciones generadas localmente se versionan, pero sin basura
 *.log
+
+# Artefactos de automatizacion del navegador
+.playwright-mcp/
+
+# Vercel
+.vercel/

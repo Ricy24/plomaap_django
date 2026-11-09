@@ -1,0 +1,15 @@
+[Unit]
+Description=Plomaap Django backend (gunicorn 8001)
+After=network.target postgresql.service
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/plomaap/backend
+EnvironmentFile=/opt/plomaap/backend/.env
+ExecStart=/opt/plomaap/backend/venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8001 --workers 1 --threads 2 --timeout 90 --access-logfile - --error-logfile -
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
