@@ -30,7 +30,9 @@ base de datos Neon (PostgreSQL + pgvector):
 | ⚡ API principal (Vercel serverless) | https://plomaap-api.vercel.app/api | ✅ En vivo |
 | 🖥️ API respaldo (AWS + nginx + SSL) | https://plomaap.duckdns.org/api | ✅ En vivo |
 | ☁️ API en Oracle Cloud (Docker + Caddy) | https://lifeosandres.duckdns.org/plomaap-api/api | ✅ En vivo |
-| 🗄️ Base de datos | Neon (Vercel/AWS) · Postgres en contenedor (Oracle) | ✅ |
+| ⚖️ **API Global Load Balancer (HAProxy)** | https://plomaaplb.158-247-126-81.nip.io/api | ✅ En vivo |
+| 📊 Dashboard de stats (HAProxy) | https://plomaaplb.158-247-126-81.nip.io/stats | ✅ (auth: admin/plomaap2026) |
+| 🗄️ Base de datos | Neon (Vercel/AWS/Oracle unificado) | ✅ |
 
 ### Arquitectura
 
@@ -59,6 +61,9 @@ flowchart TD
     ORACLE --> OAPI["plomaap_api<br/>Gunicorn :8000"]
     ORACLE --> ODB["plomaap_db<br/>pgvector pg17"]
     OAPI --> ODB
+    Browser -->|HTTPS (LB global)| GLB["HAProxy (Oracle)<br/>round-robin + health checks"]
+    GLB --> OAPI
+    GLB --> AWS
     Browser -.->|subida directa| CLD
 
     style VCDN fill:#e0f2fe,stroke:#0284c7
@@ -88,6 +93,27 @@ upstream plomaap_backend {
 
 📖 Guía completa (visual, con analogías, tipos, algoritmos y glosario):
 [`docs/despliegue/DESPLIEGUE_COMPLETO.md`](docs/despliegue/DESPLIEGUE_COMPLETO.md)
+
+### ⚖️ Balanceador global (HAProxy) — Oracle Cloud
+
+Además del balanceador local de AWS (nginx), hay un **balanceador global**
+que reparte tráfico entre **Oracle y AWS** con health checks activos y
+failover automático. Es el "mejor balanceador gratis" posible: corre en la
+VPS Always Free de Oracle.
+
+| Backend | Peso | Health check | Estado |
+|---|---|---|---|
+| Oracle (local, `plomaap_api:8000`) | 2 | `/api/health` cada 10s | ✅ UP |
+| AWS (remoto, HTTPS) | 2 | `/api/health` cada 10s | ✅ UP |
+| Vercel | backup | solo si los otros caen | ⏸️ backup |
+
+- **Algoritmo:** round-robin
+- **Failover:** si un backend falla 3 veces en 10s, se marca caído y el
+  tráfico va al otro. Cuando se recupera (2 checks OK), vuelve al pool.
+- **Dashboard:** https://plomaaplb.158-247-126-81.nip.io/stats
+  (usuario `admin`, contraseña `plomaap2026`) — muestra servidores UP/DOWN,
+  sesiones, bytes, etc. Ideal para mostrar en clase.
+- **Todas las bases unificadas en Neon** para que el balanceo sea consistente.
 
 ### Despliegue rápido del backend en Vercel
 

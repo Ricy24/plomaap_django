@@ -19,6 +19,7 @@
 6. [Parte B — Base de datos gratuita en Neon](#6-parte-b--base-de-datos-gratuita-en-neon)
 7. [Parte C — Despliegue en Vercel](#7-parte-c--despliegue-en-vercel)
 7.5 [Parte E — Despliegue en Oracle Cloud (Docker + Caddy)](#75-parte-e--despliegue-en-oracle-cloud-docker--caddy)
+7.6 [Parte F — Balanceador global (HAProxy)](#76-parte-f--balanceador-global-haproxy)
 8. [Parte D — El código, archivo por archivo](#8-parte-d--el-código-archivo-por-archivo)
 9. [Flujo completo de una petición](#9-flujo-completo-de-una-petición)
 10. [Verificación y pruebas](#10-verificación-y-pruebas)
@@ -162,6 +163,9 @@ flowchart TD
 | HTTP directo AWS | <http://18.221.80.56:5000/api> | ✅ |
 | API en Oracle Cloud (Docker + Caddy) | <https://lifeosandres.duckdns.org/plomaap-api/api> | ✅ |
 | Health check Oracle | <https://lifeosandres.duckdns.org/plomaap-api/api/health> | ✅ |
+| **API Global Load Balancer (HAProxy)** | <https://plomaaplb.158-247-126-81.nip.io/api> | ✅ |
+| Health check Global LB | <https://plomaaplb.158-247-126-81.nip.io/api/health> | ✅ |
+| Dashboard HAProxy (stats) | <https://plomaaplb.158-247-126-81.nip.io/stats> | ✅ (admin / plomaap2026) |
 
 ### Cuentas de prueba
 
@@ -885,6 +889,143 @@ docker compose up -d api
 
 ---
 
+## 7.6 Parte F — Balanceador global (HAProxy)
+
+Para mostrar "todo lo que se puede hacer" sin gastar dinero, se montó un
+**balanceador global** que reparte tráfico entre **Oracle y AWS** (y Vercel
+como backup), con **health checks activos** y **failover automático**. Es el
+"mejor balanceador gratis" posible: corre en la VPS Always Free de Oracle.
+
+### 7.6.1 Arquitectura
+
+```mermaid
+flowchart TD
+    Browser["🌐 Usuario"]
+    GLB["HAProxy (Oracle VPS)<br/>round-robin + health checks"]
+    ORA["Oracle backend<br/>plomaap_api:8000"]
+    AWS["AWS backend<br/>plomaap.duckdns.org:443 (HTTPS)"]
+    VCL["Vercel (backup)<br/>plomaap-api.vercel.app"]
+    NEON["Neon PostgreSQL<br/>(base compartida)"]
+
+    Browser -->|HTTPS| GLB
+    GLB -->|HTTP local| ORA
+    GLB -->|HTTPS remoto| AWS
+    GLB -.->|solo si los otros caen| VCL
+    ORA --> NEON
+    AWS --> NEON
+
+    style GLB fill:#fef3c7,stroke:#d97706
+    style ORA fill:#ffedd5,stroke:#ea580c
+    style AWS fill:#ffedd5,stroke:#ea580c
+    style NEON fill:#dcfce7,stroke:#16a34a
+```
+
+### 7.6.2 Componentes
+
+| Componente | Dónde | Rol |
+|---|---|---|
+| **Caddy** | Contenedor `lifeos_caddy` (Oracle) | Termina TLS (Let's Encrypt) para `plomaaplb.158-247-126-81.nip.io` y reenvía a HAProxy |
+| **HAProxy** | Contenedor `plomaap_haproxy` (Oracle) | Balanceo round-robin + health checks + failover + stats |
+| **Oracle backend** | Contenedor `plomaap_api` | Peso 2, health check `/api/health` cada 10s |
+| **AWS backend** | EC2 `plomaap.duckdns.org` (HTTPS) | Peso 2, health check `/api/health` cada 10s |
+| **Vercel** | Serverless | Backup (solo si los otros dos caen) |
+
+### 7.6.3 Configuración de HAProxy
+
+```haproxy
+backend plomaap_backends
+    mode http
+    balance roundrobin
+    http-request set-header Host localhost
+    option httpchk
+    http-check send meth GET uri /api/health ver HTTP/1.1 hdr Host localhost
+    http-check expect status 200
+    default-server inter 10s fall 3 rise 2
+
+    server oracle plomaap_api:8000 weight 2 check
+    server aws    plomaap.duckdns.org:443 ssl verify none weight 2 check resolvers dns
+```
+
+Parámetros clave:
+- `inter 10s`: health check cada 10 segundos.
+- `fall 3`: 3 fallos seguidos → servidor marcado caído.
+- `rise 2`: 2 éxitos seguidos → servidor vuelve al pool.
+- `weight 2`: ambos servidores reciben la misma carga (2:2).
+- `backup`: Vercel solo se usa si los otros dos están caídos.
+
+### 7.6.4 Caddy (terminación TLS + stats)
+
+```caddyfile
+plomaaplb.158-247-126-81.nip.io {
+    handle /stats* {
+        basic_auth {
+            admin $2a$14$pur1vcO8e...   # contraseña: plomaap2026
+        }
+        reverse_proxy plomaap_haproxy:8404
+    }
+    handle /api/* {
+        reverse_proxy plomaap_haproxy:8080
+    }
+    handle {
+        respond "PlomApp Global Load Balancer (HAProxy). Use /api/* or /stats." 200
+    }
+}
+```
+
+### 7.6.5 Dashboard de stats
+
+URL: <https://plomaaplb.158-247-126-81.nip.io/stats>
+Usuario: `admin` · Contraseña: `plomaap2026`
+
+Muestra en tiempo real:
+- Servidores UP/DOWN
+- Sesiones activas, bytes transferidos
+- Tiempos de respuesta
+- Health checks
+
+Ideal para mostrar en clase o en una demo.
+
+### 7.6.6 Unificación de bases de datos
+
+Para que el balanceo sea consistente (mismos datos en todos los backends),
+**Oracle ahora usa Neon** (igual que AWS y Vercel). Se actualizó el `.env`
+de Oracle:
+
+```dotenv
+DATABASE_URL=postgresql://neondb_owner:***@ep-restless-lab-bdv0vp50.c-8.us-east-2.aws.neon.tech/neondb?sslmode=require
+PGSSLMODE=require
+```
+
+El contenedor `plomaap_db` sigue existiendo como respaldo, pero ya no se usa.
+
+### 7.6.7 URLs del balanceador global
+
+| Endpoint | URL |
+|---|---|
+| Health | <https://plomaaplb.158-247-126-81.nip.io/api/health> |
+| Servicios | <https://plomaaplb.158-247-126-81.nip.io/api/services> |
+| Login | <https://plomaaplb.158-247-126-81.nip.io/api/auth/login> |
+| Stats (auth) | <https://plomaaplb.158-247-126-81.nip.io/stats> |
+
+### 7.6.8 Actualizar el balanceador
+
+```bash
+# En Oracle VPS
+ssh -i ~/.ssh/lifeos.key ubuntu@lifeosandres.duckdns.org
+# Editar config
+nano /home/ubuntu/plomaap/haproxy/haproxy.cfg
+# Recargar (sin downtime)
+docker restart plomaap_haproxy
+# Ver logs
+docker logs plomaap_haproxy --tail 30
+```
+
+> **Costo total: $0.** Todo corre en recursos gratuitos (Oracle Always Free +
+> AWS free tier + Vercel/Neon free). El balanceador global es el componente
+> más "profesional" del despliegue y no cuesta nada.
+
+---
+
 ## 8. Parte D — El código, archivo por archivo
 
 ### 8.1 Mapa del backend
@@ -1290,6 +1431,7 @@ El proyecto tiene pruebas unitarias e integración en `api/tests/`.
 | EBS 20 GB `gp3` | Free tier 30 GB | Después ~$1.60/mes |
 | **IPv4 pública** | **~$3.65/mes** | AWS cobra desde 2024 aunque la instancia esté apagada |
 | Oracle Cloud Always Free (VPS + Docker) | **Gratis permanente** | Sin límite de 12 meses; incluye la VM y el almacenamiento |
+| HAProxy (balanceador global) | **Gratis** | Corre en la VPS de Oracle; health checks + stats dashboard |
 | Transferencia de salida | 100 GB gratis/mes | Luego ~$0.09/GB |
 
 > **Advertencia:** la IP elástica ya **no es gratis** si está asociada a una instancia encendida (se cobra la IPv4 pública). Para un proyecto escolar, el free tier de 12 meses cubre la EC2, pero revisa **Billing → Cost Explorer** cada mes. Si quieres costo cero absoluto, apaga la EC2 y usa solo Vercel + Neon.
