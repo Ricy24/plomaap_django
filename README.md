@@ -1,5 +1,14 @@
 # PlomApp API — Backend Django (migración 1:1 desde Flask)
 
+![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-6.1.2-092E20?logo=django&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-18-336791?logo=postgresql&logoColor=white)
+![pgvector](https://img.shields.io/badge/pgvector-0.8.6-16a34a)
+![Tests](https://img.shields.io/badge/tests-490%20passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Deploy](https://img.shields.io/badge/deploy-Vercel%20%2B%20AWS-orange)
+
 Este proyecto es la **migración completa del backend Flask** de PlomApp
 (`backend_flask`) a **Django**, conservando el **mismo contrato de API**:
 mismos endpoints, mismas rutas, mismos cuerpos JSON, mismos códigos de
@@ -9,6 +18,95 @@ texto. El frontend React **no necesita ningún cambio**.
 > Es una **API pura (headless)**: no incluye el panel de administración de
 > Django (`/admin/`) ni autenticación por sesiones. Toda la autenticación es
 > JWT y la interfaz de usuario es el frontend React. Ver [Seguridad](#seguridad).
+
+## 🚀 Despliegue y arquitectura (producción)
+
+PlomApp está **desplegado y funcionando** en dos backends que comparten la misma
+base de datos Neon (PostgreSQL + pgvector):
+
+| Servicio | URL | Estado |
+|---|---|---|
+| 🌐 Frontend React | https://plomaap-react.vercel.app | ✅ En vivo |
+| ⚡ API principal (Vercel serverless) | https://plomaap-api.vercel.app/api | ✅ En vivo |
+| 🖥️ API respaldo (AWS + nginx + SSL) | https://plomaap.duckdns.org/api | ✅ En vivo |
+| 🗄️ Base de datos | Neon (PostgreSQL 18.6 + pgvector) | ✅ Compartida |
+
+### Arquitectura
+
+![Diagrama de arquitectura](docs/despliegue/arquitectura.svg)
+
+```mermaid
+flowchart TD
+    Browser["🌐 Navegador"]
+    VCDN["Vercel CDN<br/>Frontend React (Vite)"]
+    VS["Vercel Serverless<br/>Django WSGI"]
+    AWS["AWS EC2 t3.micro<br/>nginx round-robin"]
+    G1["Gunicorn :8000"]
+    G2["Gunicorn :8001"]
+    NEON["Neon PostgreSQL 18.6<br/>+ pgvector"]
+    CLD["Cloudinary (fotos/avatares)"]
+
+    Browser -->|fetch JSON+JWT| VCDN
+    VCDN --> VS
+    VS -->|psycopg2 SSL| NEON
+    Browser -->|HTTPS| AWS
+    AWS --> G1
+    AWS --> G2
+    G1 -->|psycopg2 SSL| NEON
+    G2 -->|psycopg2 SSL| NEON
+    Browser -.->|subida directa| CLD
+
+    style VCDN fill:#e0f2fe,stroke:#0284c7
+    style VS fill:#dbeafe,stroke:#2563eb
+    style AWS fill:#ffedd5,stroke:#ea580c
+    style NEON fill:#dcfce7,stroke:#16a34a
+    style CLD fill:#fef9c3,stroke:#ca8a04
+```
+
+### ⚖️ Balanceador de carga (load balancer)
+
+El backend de AWS corre **dos procesos Gunicorn** (`:8000` y `:8001`) detrás de
+**nginx**, que actúa como **balanceador de carga** con algoritmo **round-robin**:
+reparte las peticiones por turno (1, 2, 1, 2…) y, si uno falla 3 veces en
+10 segundos, lo marca como caído y deja de enviarle tráfico.
+
+```nginx
+upstream plomaap_backend {
+    server 127.0.0.1:8000 max_fails=3 fail_timeout=10s;
+    server 127.0.0.1:8001 max_fails=3 fail_timeout=10s;
+}
+```
+
+> **¿Por qué nginx y no un ALB de AWS?** Un Application Load Balancer cuesta
+> ~$16-20/mes y no entra en el free tier. nginx es gratis, corre en la misma
+> EC2 y hace round-robin + health checks pasivos + TLS.
+
+📖 Guía completa (visual, con analogías, tipos, algoritmos y glosario):
+[`docs/despliegue/DESPLIEGUE_COMPLETO.md`](docs/despliegue/DESPLIEGUE_COMPLETO.md)
+
+### Despliegue rápido del backend en Vercel
+
+Los archivos `index.py`, `vercel.json` y `.vercelignore` viven en la **raíz**
+del repo, así que el redeploy es:
+
+```bash
+cd backend_plomaap
+git pull
+npx vercel --prod --yes
+```
+
+### Variables de entorno (producción)
+
+- **AWS / local**: `DATABASE_URL` (host directo de Neon), `DEBUG=False`,
+  `USE_X_FORWARDED_PROTO=True`.
+- **Vercel**: `DATABASE_URL` con host `-pooler`, `ALLOWED_HOSTS` incluye
+  `.vercel.app`, `WEBAUTHN_RP_ID=plomaap-react.vercel.app`.
+
+### Fotos y archivos
+
+- **Avatares / registro** → subida directa a **Cloudinary** (API gratuita).
+- **Evidencias de citas** → endpoint `/api/upload/evidence` (disco del servidor;
+  funciona en AWS, no en Vercel por FS de solo lectura).
 
 ## Documentación de despliegue
 
