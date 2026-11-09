@@ -60,6 +60,39 @@ Hay **dos backends funcionales apuntando a la misma base de datos Neon**:
 
 ## 2. Arquitectura final
 
+![Diagrama de arquitectura](arquitectura.svg)
+
+> El mismo diagrama está disponible en formato Mermaid (renderiza automáticamente en GitHub):
+
+```mermaid
+flowchart TD
+    Browser["Navegador<br/>plomaap-react.vercel.app"]
+    VCDN["Vercel CDN<br/>Frontend React (Vite)"]
+    VS["Vercel Serverless<br/>Django WSGI (index.py)"]
+    AWS["AWS EC2 t3.micro<br/>nginx round-robin"]
+    G1["Gunicorn :8000"]
+    G2["Gunicorn :8001"]
+    NEON["Neon PostgreSQL 18.6<br/>+ pgvector"]
+    CLD["Cloudinary<br/>(fotos / avatares)"]
+    DNS["DuckDNS + Let's Encrypt"]
+
+    Browser -->|fetch JSON+JWT| VCDN
+    VCDN --> VS
+    VS -->|psycopg2 SSL| NEON
+    Browser -->|HTTPS / :5000| AWS
+    AWS --> G1
+    AWS --> G2
+    G1 -->|psycopg2 SSL| NEON
+    G2 -->|psycopg2 SSL| NEON
+    Browser -.->|subida directa| CLD
+
+    style VCDN fill:#e0f2fe,stroke:#0284c7
+    style VS fill:#dbeafe,stroke:#2563eb
+    style AWS fill:#ffedd5,stroke:#ea580c
+    style NEON fill:#dcfce7,stroke:#16a34a
+    style CLD fill:#fef9c3,stroke:#ca8a04
+```
+
 ```
                               ┌─────────────────────────────┐
                               │        Navegador            │
