@@ -29,7 +29,8 @@ base de datos Neon (PostgreSQL + pgvector):
 | 🌐 Frontend React | https://plomaap-react.vercel.app | ✅ En vivo |
 | ⚡ API principal (Vercel serverless) | https://plomaap-api.vercel.app/api | ✅ En vivo |
 | 🖥️ API respaldo (AWS + nginx + SSL) | https://plomaap.duckdns.org/api | ✅ En vivo |
-| 🗄️ Base de datos | Neon (PostgreSQL 18.6 + pgvector) | ✅ Compartida |
+| ☁️ API en Oracle Cloud (Docker + Caddy) | https://lifeosandres.duckdns.org/plomaap-api/api | ✅ En vivo |
+| 🗄️ Base de datos | Neon (Vercel/AWS) · Postgres en contenedor (Oracle) | ✅ |
 
 ### Arquitectura
 
@@ -54,6 +55,10 @@ flowchart TD
     AWS --> G2
     G1 -->|psycopg2 SSL| NEON
     G2 -->|psycopg2 SSL| NEON
+    Browser -->|HTTPS /plomaap-api| ORACLE["Oracle Cloud VPS<br/>Docker + Caddy"]
+    ORACLE --> OAPI["plomaap_api<br/>Gunicorn :8000"]
+    ORACLE --> ODB["plomaap_db<br/>pgvector pg17"]
+    OAPI --> ODB
     Browser -.->|subida directa| CLD
 
     style VCDN fill:#e0f2fe,stroke:#0284c7

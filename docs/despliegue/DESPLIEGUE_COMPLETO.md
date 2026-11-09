@@ -18,6 +18,7 @@
 5. [Parte A — Despliegue en AWS EC2](#5-parte-a--despliegue-en-aws-ec2)
 6. [Parte B — Base de datos gratuita en Neon](#6-parte-b--base-de-datos-gratuita-en-neon)
 7. [Parte C — Despliegue en Vercel](#7-parte-c--despliegue-en-vercel)
+7.5 [Parte E — Despliegue en Oracle Cloud (Docker + Caddy)](#75-parte-e--despliegue-en-oracle-cloud-docker--caddy)
 8. [Parte D — El código, archivo por archivo](#8-parte-d--el-código-archivo-por-archivo)
 9. [Flujo completo de una petición](#9-flujo-completo-de-una-petición)
 10. [Verificación y pruebas](#10-verificación-y-pruebas)
@@ -139,11 +140,12 @@ flowchart TD
                          (la misma base Neon)
 ```
 
-### ¿Por qué dos backends?
+### ¿Por qué varios backends?
 
 - **Vercel** cumple el requisito “todo en Vercel” y no cuesta nada.
 - **AWS** cumple el requisito explícito de tener **balanceador de carga** y **certificado SSL** con un servidor real. Además demuestra cómo se hace en la industria.
-- Ambos comparten Neon, así que no hay datos duplicados ni migraciones pendientes.
+- **Oracle Cloud** (Docker + Caddy) es permanente (Always Free, sin límite de 12 meses) y corre una base de datos propia en contenedor.
+- Vercel y AWS comparten Neon; Oracle tiene su propia base en contenedor (`plomaap_db`).
 
 ---
 
@@ -158,6 +160,8 @@ flowchart TD
 | Health check AWS | <https://plomaap.duckdns.org/api/health> | ✅ |
 | Dominio alterno AWS | <https://18-221-80-56.nip.io/api> | ✅ |
 | HTTP directo AWS | <http://18.221.80.56:5000/api> | ✅ |
+| API en Oracle Cloud (Docker + Caddy) | <https://lifeosandres.duckdns.org/plomaap-api/api> | ✅ |
+| Health check Oracle | <https://lifeosandres.duckdns.org/plomaap-api/api/health> | ✅ |
 
 ### Cuentas de prueba
 
@@ -775,6 +779,112 @@ Eso es todo: `vercel.json` enruta todo a `index.py` y `.vercelignore` excluye lo
 
 ---
 
+## 7.5 Parte E — Despliegue en Oracle Cloud (Docker + Caddy)
+
+PlomApp **también** está desplegado en una VPS de **Oracle Cloud Always Free**
+(IP `158.247.126.81`, hostname `lifeos`), compartiendo el servidor con el
+proyecto LifeOS. Es un cuarto entorno, autocontenido, con su propia base de
+datos en contenedor.
+
+### 7.5.1 Servicios Docker
+
+| Contenedor | Imagen | Puerto interno | Estado |
+|---|---|---|---|
+| `plomaap_api` | `plomaap-api:latest` (build local) | 8000 | ✅ Up |
+| `plomaap_db` | `pgvector/pgvector:pg17` | 5432 | ✅ healthy |
+| `lifeos_caddy` | `caddy:2-alpine` | 80/443 | ✅ Up (proxy compartido) |
+
+Red Docker: `plomaap_plomaap_net` (propia) + `lifeos_lifeos_net` (externa, para que Caddy llegue al contenedor).
+
+### 7.5.2 Enrutamiento con Caddy
+
+Caddy (en `lifeosandres.duckdns.org`) sirve tanto LifeOS (raíz) como PlomApp:
+
+```caddyfile
+lifeosandres.duckdns.org {
+    # PlomApp API (Django) -> contenedor plomaap_api
+    handle_path /plomaap-api/* {
+        request_body { max_size 12MB }
+        reverse_proxy plomaap_api:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+    # LifeOS (raiz)
+    handle { reverse_proxy api:8000 { ... } }
+}
+```
+
+> `handle_path` recorta el prefijo `/plomaap-api`, por eso la URL pública es
+> `https://lifeosandres.duckdns.org/plomaap-api/api/health` (el `/api` lo pone
+> Django).
+
+### 7.5.3 Estructura en el VPS
+
+```text
+/home/ubuntu/plomaap/
+├── docker-compose.yml   # db (pgvector) + api (gunicorn)
+├── Dockerfile           # python:3.12-slim, pip install, gunicorn
+├── .env                 # variables de producción (Oracle)
+├── uploads/             # evidencias (volumen bind)
+├── media/               # media (volumen bind)
+└── backend/             # código Django (git clone de plomaap_django)
+```
+
+### 7.5.4 Dockerfile
+
+```dockerfile
+FROM python:3.12-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y build-essential libpq-dev
+COPY backend/requirements.txt ./requirements.txt
+RUN pip install -r requirements.txt gunicorn==23.0.0
+COPY backend/ ./
+RUN mkdir -p static/uploads/evidence media
+EXPOSE 8000
+CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000",
+     "--workers", "3", "--timeout", "120", "--access-logfile", "-"]
+```
+
+### 7.5.5 Base de datos
+
+En Oracle la base es **local** (contenedor `plomaap_db`, pgvector pg17), no
+Neon. Variables relevantes:
+
+```dotenv
+DB_ENGINE=postgresql
+POSTGRES_HOST=plomaap_db
+POSTGRES_PORT=5432
+POSTGRES_DB=plomapp
+POSTGRES_USER=plomaap
+```
+
+### 7.5.6 Actualizar el código en Oracle
+
+```bash
+ssh -i ~/.ssh/lifeos.key ubuntu@lifeosandres.duckdns.org
+cd /home/ubuntu/plomaap/backend
+git pull origin main
+cd /home/ubuntu/plomaap
+docker compose build api
+docker compose up -d api
+```
+
+### 7.5.7 URLs de Oracle
+
+| Endpoint | URL |
+|---|---|
+| Health | <https://lifeosandres.duckdns.org/plomaap-api/api/health> |
+| Servicios | <https://lifeosandres.duckdns.org/plomaap-api/api/services> |
+| Login | <https://lifeosandres.duckdns.org/plomaap-api/api/auth/login> |
+
+> **Nota:** Oracle Cloud Always Free es **permanente** (sin límite de 12 meses),
+> a diferencia del free tier de AWS. Es el entorno más estable a largo plazo.
+
+---
+
 ## 8. Parte D — El código, archivo por archivo
 
 ### 8.1 Mapa del backend
@@ -1179,6 +1289,7 @@ El proyecto tiene pruebas unitarias e integración en `api/tests/`.
 | EC2 `t3.micro` | Free tier 12 meses | Después ~$8–10/mes |
 | EBS 20 GB `gp3` | Free tier 30 GB | Después ~$1.60/mes |
 | **IPv4 pública** | **~$3.65/mes** | AWS cobra desde 2024 aunque la instancia esté apagada |
+| Oracle Cloud Always Free (VPS + Docker) | **Gratis permanente** | Sin límite de 12 meses; incluye la VM y el almacenamiento |
 | Transferencia de salida | 100 GB gratis/mes | Luego ~$0.09/GB |
 
 > **Advertencia:** la IP elástica ya **no es gratis** si está asociada a una instancia encendida (se cobra la IPv4 pública). Para un proyecto escolar, el free tier de 12 meses cubre la EC2, pero revisa **Billing → Cost Explorer** cada mes. Si quieres costo cero absoluto, apaga la EC2 y usa solo Vercel + Neon.
