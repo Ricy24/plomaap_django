@@ -11,6 +11,7 @@ from api.models import User
 from api.utils.decorators import jwt_required_custom
 from api.utils.jwt_utils import generate_token
 from api.utils.rate_limit import rate_limit
+from api.utils.request_utils import json_body
 
 
 @rate_limit(requests=10, window=60)

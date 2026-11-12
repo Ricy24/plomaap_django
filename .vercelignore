@@ -1,0 +1,16 @@
+# Archivos que NO se suben al despliegue de Vercel.
+# Se excluye pyproject.toml porque solo contiene configuración de Ruff;
+# así Vercel instala las dependencias desde requirements.txt.
+
+pyproject.toml
+venv
+.git
+.github
+docs
+backups
+api/tests
+.pytest_cache
+.ruff_cache
+.playwright-mcp
+*.dump
+*.sqlite3

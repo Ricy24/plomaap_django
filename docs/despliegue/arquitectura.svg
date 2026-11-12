@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="640" viewBox="0 0 1180 640" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#555"/>
+    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1180" height="640" fill="url(#bg)"/>
+
+  <text x="590" y="40" text-anchor="middle" font-size="24" font-weight="700" fill="#1f2937">Arquitectura de despliegue — PlomApp</text>
+  <text x="590" y="62" text-anchor="middle" font-size="13" fill="#6b7280">Frontend en Vercel · Backend en Vercel + AWS · Base de datos compartida en Neon</text>
+
+  <!-- Browser -->
+  <rect x="480" y="85" width="220" height="52" rx="10" fill="#ffffff" stroke="#9ca3af" stroke-width="2"/>
+  <text x="590" y="108" text-anchor="middle" font-size="15" font-weight="600" fill="#111827">Navegador</text>
+  <text x="590" y="128" text-anchor="middle" font-size="11" fill="#6b7280">https://plomaap-react.vercel.app</text>
+
+  <!-- Vercel column -->
+  <rect x="90" y="175" width="300" height="74" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="240" y="200" text-anchor="middle" font-size="14" font-weight="600" fill="#075985">Vercel CDN</text>
+  <text x="240" y="220" text-anchor="middle" font-size="11" fill="#075985">Proyecto plomaap-react · React + Vite</text>
+  <text x="240" y="238" text-anchor="middle" font-size="10" fill="#075985">SPA, assets con hash, rewrites a index.html</text>
+
+  <rect x="90" y="285" width="300" height="74" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="240" y="310" text-anchor="middle" font-size="14" font-weight="600" fill="#1e3a8a">Vercel Serverless</text>
+  <text x="240" y="330" text-anchor="middle" font-size="11" fill="#1e3a8a">Proyecto plomaap-api · Django (WSGI)</text>
+  <text x="240" y="348" text-anchor="middle" font-size="10" fill="#1e3a8a">index.py → app = get_wsgi_application()</text>
+
+  <!-- AWS column -->
+  <rect x="790" y="175" width="300" height="190" rx="10" fill="#ffedd5" stroke="#ea580c" stroke-width="2"/>
+  <text x="940" y="200" text-anchor="middle" font-size="14" font-weight="600" fill="#9a3412">AWS EC2 t3.micro (Ubuntu)</text>
+  <text x="940" y="220" text-anchor="middle" font-size="11" fill="#9a3412">IP elástica 18.221.80.56 · DuckDNS</text>
+  <rect x="810" y="235" width="260" height="40" rx="6" fill="#ffffff" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="940" y="260" text-anchor="middle" font-size="12" font-weight="600" fill="#9a3412">nginx :443 (balanceador round-robin)</text>
+  <rect x="810" y="285" width="125" height="40" rx="6" fill="#ffffff" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="872" y="310" text-anchor="middle" font-size="11" fill="#9a3412">Gunicorn :8000</text>
+  <rect x="945" y="285" width="125" height="40" rx="6" fill="#ffffff" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="1007" y="310" text-anchor="middle" font-size="11" fill="#9a3412">Gunicorn :8001</text>
+  <text x="940" y="348" text-anchor="middle" font-size="10" fill="#9a3412">Let's Encrypt SSL · max_fails=3 fail_timeout=10s</text>
+
+  <!-- Neon -->
+  <rect x="440" y="470" width="300" height="74" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="590" y="496" text-anchor="middle" font-size="14" font-weight="600" fill="#14532d">Neon PostgreSQL 18.6</text>
+  <text x="590" y="516" text-anchor="middle" font-size="11" fill="#14532d">Base compartida · extensión pgvector 0.8.6</text>
+  <text x="590" y="534" text-anchor="middle" font-size="10" fill="#14532d">AWS: host directo · Vercel: host -pooler</text>
+
+  <!-- Arrows -->
+  <!-- Browser -> Vercel CDN -->
+  <line x1="530" y1="137" x2="240" y2="175" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="360" y="150" text-anchor="middle" font-size="10" fill="#374151">fetch (JSON + JWT)</text>
+  <!-- Browser -> AWS -->
+  <line x1="650" y1="137" x2="940" y2="175" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="820" y="150" text-anchor="middle" font-size="10" fill="#374151">HTTPS / HTTP :5000</text>
+  <!-- Vercel CDN -> Serverless -->
+  <line x1="240" y1="249" x2="240" y2="285" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Vercel Serverless -> Neon -->
+  <line x1="240" y1="359" x2="470" y2="470" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="300" y="420" text-anchor="middle" font-size="10" fill="#374151">psycopg2 (SSL)</text>
+  <!-- AWS nginx -> Neon -->
+  <line x1="940" y1="365" x2="710" y2="470" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="860" y="420" text-anchor="middle" font-size="10" fill="#374151">psycopg2 (SSL)</text>
+
+  <!-- Cloudinary note -->
+  <rect x="90" y="560" width="300" height="52" rx="8" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="240" y="580" text-anchor="middle" font-size="12" font-weight="600" fill="#713f12">Cloudinary (fotos / avatares)</text>
+  <text x="240" y="598" text-anchor="middle" font-size="10" fill="#713f12">API gratuita · subida directa desde el frontend</text>
+
+  <!-- DuckDNS / Let's Encrypt note -->
+  <rect x="790" y="560" width="300" height="52" rx="8" fill="#fce7f3" stroke="#db2777" stroke-width="1.5"/>
+  <text x="940" y="580" text-anchor="middle" font-size="12" font-weight="600" fill="#9d174d">DuckDNS + Let's Encrypt</text>
+  <text x="940" y="598" text-anchor="middle" font-size="10" fill="#9d174d">DNS gratuito · SSL automático (renovación)</text>
+</svg>
