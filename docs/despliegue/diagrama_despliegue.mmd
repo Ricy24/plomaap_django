@@ -1,0 +1,160 @@
+%% Diagrama de despliegue de PlomApp — fuente editable
+%% Renderiza en GitHub, GitLab, Obsidian, VS Code (extensión Mermaid) o mermaid.live
+%% Notación: zonas = nodos de despliegue; cajas = artefactos/componentes; flechas = conexiones.
+%% Colores: azul Vercel · naranja AWS · violeta Oracle · verde datos · amarillo SaaS · rosa CI/CD.
+
+flowchart TB
+    classDef client fill:#f8fafc,stroke:#475569,color:#0f172a,stroke-width:2px
+    classDef vercel fill:#e0f2fe,stroke:#0284c7,color:#075985,stroke-width:2px
+    classDef aws fill:#ffedd5,stroke:#ea580c,color:#9a3412,stroke-width:2px
+    classDef oracle fill:#ede9fe,stroke:#7c3aed,color:#5b21b6,stroke-width:2px
+    classDef data fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px
+    classDef saas fill:#fef9c3,stroke:#ca8a04,color:#713f12,stroke-width:2px
+    classDef ci fill:#fce7f3,stroke:#db2777,color:#831843,stroke-width:2px
+    classDef local fill:#ecfeff,stroke:#0891b2,color:#164e63,stroke-width:2px
+    classDef store fill:#f1f5f9,stroke:#64748b,color:#334155,stroke-width:2px
+
+    subgraph CLIENTES["👤 Clientes y acceso"]
+        WEB["Navegador web<br/>React + Vite SPA<br/>plomaap-react.vercel.app<br/>JWT en localStorage"]:::client
+        AND["App Android (opcional)<br/>cliente legado<br/>Google OAuth Android"]:::client
+        DNS["DNS + TLS<br/>Vercel DNS · DuckDNS · nip.io<br/>Let's Encrypt / TLS 1.2+"]:::client
+        ID["Identidad y sesión<br/>Google Identity OAuth 2.0<br/>WebAuthn · JWT HS256 24 h<br/>bcrypt cost 12"]:::client
+        OBS["Observabilidad<br/>GET /api/health (SELECT 1)<br/>HAProxy stats :8404<br/>logs «security» · errores JSON"]:::client
+    end
+
+    subgraph VERCEL["▲ Vercel (plan Hobby)"]
+        VCDN["Edge / CDN global<br/>proyecto plomaap-react<br/>build Vite → dist/<br/>rewrites SPA → index.html<br/>cache inmutable /assets/*"]:::vercel
+        VAPI["Serverless Function<br/>proyecto plomaap-api<br/>runtime @vercel/python<br/>index.py → Django WSGI<br/>maxLambdaSize 50 MB<br/>FS de solo lectura (/tmp)"]:::vercel
+    end
+
+    subgraph AWSZ["☁ AWS · EC2 t3.micro"]
+        subgraph EC2["EC2 Ubuntu 24.04 LTS · us-east-2b<br/>IP elástica 18.221.80.56 · 20 GB gp3"]
+            NGINX["nginx :443 (TLS Let's Encrypt)<br/>:80 → 301 · :5000 compatibilidad<br/>upstream round-robin 8000/8001<br/>max_fails=3 · fail_timeout=10s<br/>/static/ alias · uploads proxy"]:::aws
+            G1["Gunicorn :8000<br/>systemd plomaap.service<br/>1 worker · 2 threads · 90 s"]:::aws
+            G2["Gunicorn :8001<br/>systemd plomaap2.service<br/>1 worker · 2 threads · 90 s"]:::aws
+            RUNTIME_AWS["Runtime Django 6.1.2<br/>config.wsgi:application<br/>mismo contrato /api/*"]:::aws
+            DISK["/opt/plomaap/backend<br/>venv · .env (600)<br/>staticfiles/ · uploads/evidence"]:::aws
+        end
+        SG["Security Group plomaap-sg<br/>22 solo IP del desarrollador<br/>80 · 443 · 5000 abiertos<br/>UFW alineado"]:::aws
+        PG16["PostgreSQL 16 + pgvector<br/>instalado y detenido<br/>respaldo local, no activo"]:::aws
+    end
+
+    subgraph ORACLE["☁ Oracle Cloud Always Free · VPS 158.247.126.81 (lifeos)"]
+        CADDY["Caddy · lifeos_caddy :80/:443<br/>TLS automático<br/>/plomaap-api/* → plomaap_api:8000<br/>/ → LifeOS (compartido)<br/>plomaaplb.../api → haproxy:8080<br/>plomaaplb.../stats → haproxy:8404"]:::oracle
+        HAPROXY["HAProxy · plomaap_haproxy<br/>round-robin · weight 2:2<br/>health GET /api/health 10 s<br/>fall 3 · rise 2 · stats :8404<br/>failover Oracle ↔ AWS<br/>Vercel = backup lógico"]:::oracle
+        OAPI["plomaap_api (Docker)<br/>imagen plomaap-api:latest<br/>Gunicorn :8000 · 3 workers · 120 s<br/>Python 3.12-slim<br/>volumes ./uploads y ./media"]:::oracle
+        ODB["plomaap_db (respaldo)<br/>pgvector/pgvector:pg17<br/>volumen persistente<br/>ya no se usa: Oracle apunta a Neon"]:::oracle
+        ONET["Redes Docker<br/>plomaap_plomaap_net<br/>lifeos_lifeos_net (externa)"]:::oracle
+    end
+
+    subgraph DATA["🗄 Neon · PostgreSQL gestionado"]
+        NEON["Neon PostgreSQL 18.6 + pgvector 0.8.6<br/>proyecto my-first-project · rama production<br/>BD neondb · us-east-2 · SSL obligatorio<br/>host directo + host -pooler<br/>18 tablas de dominio · vector(512) + HNSW<br/>backups y branching gestionados"]:::data
+    end
+
+    subgraph SAASZ["🔌 Servicios externos (SaaS)"]
+        SAASBUS["APIs externas<br/>HTTPS 443 · SMTP 465"]:::saas
+        CLOUD["Cloudinary<br/>cloud dxoejokli · preset plomaap<br/>avatares/fotos de registro"]:::saas
+        ZOHO["Zoho Mail SMTP<br/>smtp.zoho.com:465 SSL<br/>verificación y reset<br/>hilo daemon"]:::saas
+        GEMINI["Google Gemini API<br/>generativelanguage v1beta<br/>gemini-3.6-flash → 3.5-flash-lite<br/>NLU /api/intelligence"]:::saas
+        VOYAGE["Voyage AI<br/>api.voyageai.com/v1/embeddings<br/>voyage-3-lite · 512 dims<br/>fallback local-hash-512"]:::saas
+        GOOGLE["Google Identity<br/>OAuth 2.0 · ID token<br/>cliente web + Android<br/>backend valida «aud»"]:::saas
+        NOMINATIM["Nominatim / Unsplash<br/>geocodificación OSM<br/>imágenes preset<br/>consumo desde la SPA"]:::saas
+    end
+
+    subgraph STORE["💾 Almacenamiento y respaldos"]
+        AWS_DISK["AWS: /opt/plomaap/backend/static/uploads/evidence<br/>disco 20 GB gp3 · nginx lo sirve"]:::store
+        ORACLE_DISK["Oracle: ./uploads/ y ./media/<br/>bind mounts + volumen pgvector"]:::store
+        VERCEL_TMP["Vercel: /tmp efímero<br/>sin persistencia"]:::store
+        BACKUPS["Local: backups/*.dump<br/>pg_dump -Fc · gitignored<br/>Neon: backups gestionados"]:::store
+    end
+
+    subgraph DEV["💻 Desarrollo local (Windows)"]
+        WS["Estación de desarrollo<br/>Python 3.12 · venv · Django 6.1.2<br/>requirements.txt / requirements-dev.txt<br/>runserver 0.0.0.0:5000<br/>pytest · coverage"]:::local
+        DOCKERPG["Docker Desktop<br/>plomapp-postgres-pgvector<br/>pgvector/pg17 · localhost:5434<br/>base activa de desarrollo"]:::local
+        NATIVEPG["PostgreSQL 17 nativo<br/>localhost:5432<br/>respaldo sin pgvector"]:::local
+        MYSQL["MySQL 8.4<br/>fallback / CI"]:::local
+        SQLITE["SQLite<br/>fallback / tests en memoria"]:::local
+    end
+
+    subgraph CICD["🔁 GitHub + GitHub Actions"]
+        FRONTREPO["GitHub plomaap_react_estable<br/>frontend React/Vite<br/>deploy manual con Vercel CLI"]:::ci
+        REPO["GitHub Ricy24/plomaap_django<br/>backend Django<br/>ramas main / dev_Andres<br/>PR a main · CODEOWNERS"]:::ci
+        JOBS["Workflow «Pruebas»<br/>calidad · unit-sqlite<br/>unit-postgres · unit-mysql<br/>integration-postgres · mutación<br/>informe · required"]:::ci
+        ARTS["Artefactos<br/>coverage.xml · XLSX de entrega<br/>commit en main [skip ci]"]:::ci
+    end
+
+    subgraph OPS["🛠 Operación y despliegue (manual)"]
+        OPSBOX["Vercel CLI · SSH AWS/Oracle<br/>git pull · systemctl restart<br/>docker compose build/up<br/>migrate · seed_* · pg_dump<br/>/api/health · /stats"]:::ci
+    end
+
+    %% ---------- tráfico de usuarios ----------
+    WEB -->|"SPA/assets · HTTPS 443"| VCDN
+    WEB -->|"fetch JSON + JWT · HTTPS 443"| VAPI
+    WEB -->|"HTTPS 443 · HTTP :5000"| NGINX
+    WEB -->|"HTTPS directo o vía LB global"| CADDY
+    WEB -.->|"OAuth 2.0 / ID token"| ID
+    WEB -.->|"subida directa"| CLOUD
+    WEB -.->|"geocoding / imágenes"| NOMINATIM
+    AND -.->|"mismo contrato /api/*"| VAPI
+
+    %% ---------- dentro de Vercel / AWS / Oracle ----------
+    CADDY -->|"8080 API · 8404 stats"| HAPROXY
+    CADDY -->|"HTTP Docker 8000"| OAPI
+    HAPROXY -->|"HTTP local 8000"| OAPI
+    HAPROXY -->|"HTTPS 443 · verify none · health"| NGINX
+    HAPROXY -.->|"backup solo si ambos caen"| VAPI
+    NGINX -->|"HTTP 127.0.0.1:8000"| G1
+    NGINX -->|"HTTP 127.0.0.1:8001"| G2
+    NGINX -->|"alias /static/"| DISK
+    G1 --- RUNTIME_AWS
+    G2 --- RUNTIME_AWS
+    RUNTIME_AWS --> DISK
+
+    %% ---------- datos ----------
+    VAPI -->|"psycopg2 SSL · host -pooler"| NEON
+    RUNTIME_AWS -->|"psycopg2 SSL · host directo"| NEON
+    OAPI -->|"psycopg2 SSL · host directo"| NEON
+    OAPI -.->|"respaldo no usado"| ODB
+
+    %% ---------- SaaS ----------
+    VAPI -->|"HTTPS / SMTP"| SAASBUS
+    RUNTIME_AWS -->|"HTTPS / SMTP"| SAASBUS
+    OAPI -->|"HTTPS / SMTP"| SAASBUS
+    SAASBUS --- CLOUD
+    SAASBUS --- ZOHO
+    SAASBUS --- GEMINI
+    SAASBUS --- VOYAGE
+    SAASBUS --- GOOGLE
+    SAASBUS --- NOMINATIM
+
+    %% ---------- almacenamiento ----------
+    DISK --- AWS_DISK
+    OAPI --- ORACLE_DISK
+    VAPI --- VERCEL_TMP
+    NEON --- BACKUPS
+
+    %% ---------- desarrollo / CI-CD ----------
+    WS -->|"git push / PR"| REPO
+    WS -.->|"git push frontend"| FRONTREPO
+    WS --> DOCKERPG
+    WS --> NATIVEPG
+    WS --> MYSQL
+    WS --> SQLITE
+    REPO --> JOBS
+    JOBS --> ARTS
+    FRONTREPO -.->|"Vercel CLI"| VCDN
+    REPO -.->|"Vercel CLI"| VAPI
+    REPO -.->|"git pull + systemd"| NGINX
+    REPO -.->|"git pull + docker compose"| OAPI
+    OPSBOX -.->|"operación"| HAPROXY
+    OPSBOX -.->|"operación"| NGINX
+    OPSBOX -.->|"operación"| OAPI
+    OPSBOX -.->|"operación"| VAPI
+
+    %% ---------- notas de borde ----------
+    DNS -.->|"resuelve"| VCDN
+    DNS -.->|"resuelve"| NGINX
+    DNS -.->|"resuelve"| CADDY
+    OBS -.->|"consulta"| NGINX
+    OBS -.->|"consulta"| VAPI
+    OBS -.->|"consulta"| OAPI

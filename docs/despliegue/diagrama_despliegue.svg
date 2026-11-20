@@ -1,0 +1,312 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1500" viewBox="0 0 1920 1500" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="0.55" stop-color="#f1f5f9"/>
+      <stop offset="1" stop-color="#e8eef5"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+<rect width="1920" height="1500" fill="url(#bg)"/>
+<text x="46" y="44" font-size="29" font-weight="800" fill="#0f172a">Diagrama de despliegue completo — PlomApp</text>
+<text x="46" y="72" font-size="13" fill="#475569">Frontend React/Vite en Vercel · APIs Django en Vercel, AWS y Oracle · Neon + pgvector · HAProxy · GitHub Actions · 2026-11-20</text>
+<rect x="1390" y="22" width="480" height="66" rx="10" fill="#ffffff" stroke="#cbd5e1"/>
+  <marker id="arr_0f172a" markerWidth="11" markerHeight="11" refX="9" refY="3.5"
+          orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L0,7 L10,3.5 z" fill="#0f172a"/>
+  </marker>
+<polyline points="1408,42 1458,42" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_0f172a)"/>
+<rect x="1468" y="37" width="94.00000000000001" height="17" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="1468" y="46" text-anchor="start" font-size="10" font-weight="600" fill="#0f172a">tráfico / datos</text>
+  <marker id="arr_db2777" markerWidth="11" markerHeight="11" refX="9" refY="3.5"
+          orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L0,7 L10,3.5 z" fill="#db2777"/>
+  </marker>
+<polyline points="1408,62 1458,62" fill="none" stroke="#db2777" stroke-width="2.2" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_db2777)"/>
+<rect x="1468" y="57" width="122.00000000000001" height="17" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="1468" y="66" text-anchor="start" font-size="10" font-weight="600" fill="#db2777">despliegue / control</text>
+  <marker id="arr_16a34a" markerWidth="11" markerHeight="11" refX="9" refY="3.5"
+          orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L0,7 L10,3.5 z" fill="#16a34a"/>
+  </marker>
+<polyline points="1650,42 1700,42" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-dasharray="3 3" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_16a34a)"/>
+<rect x="1710" y="37" width="54.800000000000004" height="17" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="1710" y="46" text-anchor="start" font-size="10" font-weight="600" fill="#16a34a">SSL / BD</text>
+  <marker id="arr_ea580c" markerWidth="11" markerHeight="11" refX="9" refY="3.5"
+          orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L0,7 L10,3.5 z" fill="#ea580c"/>
+  </marker>
+<polyline points="1650,62 1700,62" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ea580c)"/>
+<rect x="1710" y="57" width="110.80000000000001" height="17" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="1710" y="66" text-anchor="start" font-size="10" font-weight="600" fill="#ea580c">balanceo / externo</text>
+<rect x="40" y="95" width="1840" height="125" rx="18" fill="#f8fafc" stroke="#475569" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="58" y="119" font-size="12" font-weight="700" letter-spacing="1.2" fill="#475569">CLIENTES · DNS · IDENTIDAD · OPERACIÓN</text>
+<rect x="40" y="250" width="500" height="540" rx="18" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="58" y="274" font-size="12" font-weight="700" letter-spacing="1.2" fill="#0284c7">VERCEL (PLAN HOBBY)</text>
+<rect x="570" y="250" width="600" height="540" rx="18" fill="#ffedd5" stroke="#ea580c" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="588" y="274" font-size="12" font-weight="700" letter-spacing="1.2" fill="#ea580c">AWS · EC2 T3.MICRO</text>
+<rect x="1200" y="250" width="680" height="540" rx="18" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="1218" y="274" font-size="12" font-weight="700" letter-spacing="1.2" fill="#7c3aed">ORACLE CLOUD · ALWAYS FREE</text>
+<rect x="40" y="825" width="620" height="290" rx="18" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="58" y="849" font-size="12" font-weight="700" letter-spacing="1.2" fill="#16a34a">NEON · POSTGRESQL GESTIONADO</text>
+<rect x="690" y="825" width="760" height="290" rx="18" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="708" y="849" font-size="12" font-weight="700" letter-spacing="1.2" fill="#ca8a04">SERVICIOS EXTERNOS (SAAS)</text>
+<rect x="1480" y="825" width="400" height="290" rx="18" fill="#f1f5f9" stroke="#64748b" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="1498" y="849" font-size="12" font-weight="700" letter-spacing="1.2" fill="#64748b">ALMACENAMIENTO Y RESPALDOS</text>
+<rect x="40" y="1150" width="1840" height="330" rx="18" fill="#fce7f3" stroke="#db2777" stroke-width="1.6" stroke-dasharray="7 5" opacity="0.72"/>
+<text x="58" y="1174" font-size="12" font-weight="700" letter-spacing="1.2" fill="#db2777">DESARROLLO · CI/CD · OPERACIÓN</text>
+<rect x="60" y="130" width="325" height="75" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+<text x="222.5" y="154" text-anchor="middle" font-size="13.2" font-weight="700" fill="#0f172a">Navegador web (SPA)</text>
+<text x="222.5" y="174" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">React + Vite · React Router</text>
+<text x="222.5" y="188.2" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">https://plomaap-react.vercel.app</text>
+<text x="222.5" y="202.39999999999998" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">JWT en localStorage · fetch JSON</text>
+<rect x="405" y="130" width="285" height="75" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+<text x="547.5" y="154" text-anchor="middle" font-size="13.0" font-weight="700" fill="#0f172a">App Android (cliente legado)</text>
+<text x="547.5" y="174" text-anchor="middle" font-size="9.6" fill="#0f172a" opacity="0.92">Google OAuth client Android</text>
+<text x="547.5" y="188.2" text-anchor="middle" font-size="9.6" fill="#0f172a" opacity="0.92">consume el mismo contrato /api/*</text>
+<text x="547.5" y="202.39999999999998" text-anchor="middle" font-size="9.6" fill="#0f172a" opacity="0.92">opcional / no desplegada aquí</text>
+<rect x="710" y="130" width="330" height="75" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+<text x="875.0" y="154" text-anchor="middle" font-size="13.2" font-weight="700" fill="#0f172a">DNS y TLS</text>
+<text x="875.0" y="174" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">Vercel DNS · DuckDNS · nip.io</text>
+<text x="875.0" y="188.2" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">Let's Encrypt (certbot / Caddy)</text>
+<text x="875.0" y="202.39999999999998" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">TLS 1.2+ · HSTS configurable</text>
+<rect x="1060" y="130" width="325" height="75" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+<text x="1222.5" y="154" text-anchor="middle" font-size="13.2" font-weight="700" fill="#0f172a">Identidad y sesión</text>
+<text x="1222.5" y="174" text-anchor="middle" font-size="9.6" fill="#0f172a" opacity="0.92">Google Identity OAuth 2.0</text>
+<text x="1222.5" y="188.2" text-anchor="middle" font-size="9.6" fill="#0f172a" opacity="0.92">WebAuthn RP: plomaap-react.vercel.app</text>
+<text x="1222.5" y="202.39999999999998" text-anchor="middle" font-size="9.6" fill="#0f172a" opacity="0.92">JWT HS256 24 h · bcrypt cost 12</text>
+<rect x="1405" y="130" width="455" height="75" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+<text x="1632.5" y="154" text-anchor="middle" font-size="13.2" font-weight="700" fill="#0f172a">Observabilidad y salud</text>
+<text x="1632.5" y="174" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">GET /api/health (SELECT 1) en los 3 backends</text>
+<text x="1632.5" y="188.2" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">HAProxy stats :8404 · logs «security» a consola</text>
+<text x="1632.5" y="202.39999999999998" text-anchor="middle" font-size="9.8" fill="#0f172a" opacity="0.92">errores JSON 400/401/403/404/429/500</text>
+<rect x="65" y="295" width="450" height="140" rx="10" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+<text x="290.0" y="319" text-anchor="middle" font-size="14.5" font-weight="700" fill="#075985">Vercel Edge / CDN global</text>
+<text x="290.0" y="339" text-anchor="middle" font-size="10.0" fill="#075985" opacity="0.92">Proyecto plomaap-react · repo plomaap_react_estable</text>
+<text x="290.0" y="355.2" text-anchor="middle" font-size="10.0" fill="#075985" opacity="0.92">Build Vite: npm run build → dist/</text>
+<text x="290.0" y="371.4" text-anchor="middle" font-size="10.0" fill="#075985" opacity="0.92">Rewrites SPA: cualquier ruta → index.html</text>
+<text x="290.0" y="387.59999999999997" text-anchor="middle" font-size="10.0" fill="#075985" opacity="0.92">Cache inmutable /assets/* (1 año, hash Vite)</text>
+<text x="290.0" y="403.79999999999995" text-anchor="middle" font-size="10.0" fill="#075985" opacity="0.92">TLS gestionado · HTTPS 443 · sin servidor propio</text>
+<rect x="65" y="455" width="450" height="250" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<text x="290.0" y="479" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1e3a8a">Vercel Serverless Function</text>
+<text x="290.0" y="499" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">Proyecto plomaap-api · runtime @vercel/python</text>
+<text x="290.0" y="514.4" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">index.py → app = get_wsgi_application()</text>
+<text x="290.0" y="529.8" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">Django 6.1.2 WSGI · maxLambdaSize 50 MB</text>
+<text x="290.0" y="545.1999999999999" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">Sin django.contrib.admin/auth · 100 % JWT</text>
+<text x="290.0" y="560.5999999999999" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">/api/*: auth · services · technicians · appointments · admin</text>
+<text x="290.0" y="575.9999999999999" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">addresses · favorites · events · homes · onboarding · embeddings</text>
+<text x="290.0" y="591.3999999999999" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">search · intelligence · recommendations · upload · health</text>
+<text x="290.0" y="606.7999999999998" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">FS de solo lectura (excepto /tmp): evidencia no persiste</text>
+<text x="290.0" y="622.1999999999998" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">Env: DATABASE_URL (-pooler) · JWT_SECRET_KEY · GOOGLE_CLIENT_ID</text>
+<text x="290.0" y="637.5999999999998" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">MAIL_* · GEMINI_API_KEY · VOYAGE_API_KEY · WEBAUTHN_*</text>
+<text x="290.0" y="652.9999999999998" text-anchor="middle" font-size="9.6" fill="#1e3a8a" opacity="0.92">CORS/CSRF · ALLOWED_HOSTS · SECURE_SSL_REDIRECT=False</text>
+<text x="410" y="775" text-anchor="middle" font-size="10" fill="#075985" opacity="0.9">Despliegue: npx vercel --prod --yes</text>
+<rect x="595" y="295" width="550" height="385" rx="10" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+<text x="870.0" y="319" text-anchor="middle" font-size="14.5" font-weight="700" fill="#9a3412">EC2 t3.micro · Ubuntu 24.04 LTS</text>
+<text x="870.0" y="339" text-anchor="middle" font-size="10.0" fill="#9a3412" opacity="0.92">us-east-2b · 20 GB gp3 · IP elástica 18.221.80.56</text>
+<rect x="615" y="355" width="510" height="105" rx="10" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+<text x="870.0" y="379" text-anchor="middle" font-size="13.6" font-weight="700" fill="#9a3412">nginx :443  (TLS Let's Encrypt)</text>
+<text x="870.0" y="399" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">:80 → 301 HTTPS · :5000 HTTP de compatibilidad · ACME webroot</text>
+<text x="870.0" y="413.4" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">upstream round-robin 127.0.0.1:8000 / 8001 · max_fails=3 fail_timeout=10s</text>
+<text x="870.0" y="427.79999999999995" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">client_max_body_size 12M · /static/ alias · /static/uploads/ proxy</text>
+<rect x="615" y="475" width="245" height="95" rx="10" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+<text x="737.5" y="499" text-anchor="middle" font-size="13.2" font-weight="700" fill="#9a3412">Gunicorn :8000</text>
+<text x="737.5" y="519" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">systemd plomaap.service</text>
+<text x="737.5" y="533.2" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">1 worker · 2 threads · timeout 90 s</text>
+<text x="737.5" y="547.4000000000001" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">config.wsgi:application</text>
+<rect x="880" y="475" width="245" height="95" rx="10" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+<text x="1002.5" y="499" text-anchor="middle" font-size="13.2" font-weight="700" fill="#9a3412">Gunicorn :8001</text>
+<text x="1002.5" y="519" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">systemd plomaap2.service</text>
+<text x="1002.5" y="533.2" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">1 worker · 2 threads · timeout 90 s</text>
+<text x="1002.5" y="547.4000000000001" text-anchor="middle" font-size="9.4" fill="#9a3412" opacity="0.92">mismo código y mismo .env</text>
+<rect x="615" y="585" width="510" height="75" rx="10" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+<text x="870.0" y="609" text-anchor="middle" font-size="13.0" font-weight="700" fill="#9a3412">/opt/plomaap/backend</text>
+<text x="870.0" y="629" text-anchor="middle" font-size="9.6" fill="#9a3412" opacity="0.92">venv · .env (chmod 600) · staticfiles/ · backups</text>
+<text x="870.0" y="644.0" text-anchor="middle" font-size="9.6" fill="#9a3412" opacity="0.92">static/uploads/evidence/* en disco real (persistente)</text>
+<rect x="595" y="695" width="270" height="85" rx="10" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+<text x="730.0" y="719" text-anchor="middle" font-size="12.4" font-weight="700" fill="#9a3412">Security Group plomaap-sg</text>
+<text x="730.0" y="739" text-anchor="middle" font-size="9.2" fill="#9a3412" opacity="0.92">22/tcp solo IP del desarrollador</text>
+<text x="730.0" y="753.0" text-anchor="middle" font-size="9.2" fill="#9a3412" opacity="0.92">80, 443, 5000 abiertos · UFW alineado</text>
+<text x="730.0" y="767.0" text-anchor="middle" font-size="9.2" fill="#9a3412" opacity="0.92">SSH key plomaap_aws.pem</text>
+<rect x="875" y="695" width="270" height="85" rx="10" fill="#ffffff" stroke="#ea580c" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="1010.0" y="719" text-anchor="middle" font-size="12.4" font-weight="700" fill="#9a3412">PostgreSQL 16 + pgvector</text>
+<text x="1010.0" y="739" text-anchor="middle" font-size="9.2" fill="#9a3412" opacity="0.92">instalado en la EC2 y detenido</text>
+<text x="1010.0" y="753.0" text-anchor="middle" font-size="9.2" fill="#9a3412" opacity="0.92">respaldo local, no es la BD activa</text>
+<text x="1010.0" y="767.0" text-anchor="middle" font-size="9.2" fill="#9a3412" opacity="0.92">la BD real es Neon</text>
+<rect x="1225" y="295" width="630" height="460" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+<text x="1540.0" y="319" text-anchor="middle" font-size="14.5" font-weight="700" fill="#5b21b6">VPS Always Free · 158.247.126.81 (lifeos)</text>
+<text x="1540.0" y="339" text-anchor="middle" font-size="9.8" fill="#5b21b6" opacity="0.92">Ubuntu · Docker Engine · compartida con el proyecto LifeOS</text>
+<rect x="1245" y="350" width="590" height="105" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<text x="1540.0" y="374" text-anchor="middle" font-size="13.2" font-weight="700" fill="#5b21b6">Caddy · lifeos_caddy :80/:443  (TLS automático)</text>
+<text x="1540.0" y="394" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">lifeosandres.duckdns.org/plomaap-api/*  →  plomaap_api:8000</text>
+<text x="1540.0" y="408.2" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">lifeosandres.duckdns.org/*  →  LifeOS (proyecto compartido)</text>
+<text x="1540.0" y="422.4" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">plomaaplb.158-247-126-81.nip.io/api/* → haproxy:8080</text>
+<text x="1540.0" y="436.59999999999997" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">plomaaplb.158-247-126-81.nip.io/stats → haproxy:8404 (basic auth)</text>
+<rect x="1245" y="470" width="285" height="145" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<text x="1387.5" y="494" text-anchor="middle" font-size="13.0" font-weight="700" fill="#5b21b6">HAProxy · plomaap_haproxy</text>
+<text x="1387.5" y="514" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">balance roundrobin · weight 2:2</text>
+<text x="1387.5" y="528.6" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">health GET /api/health cada 10 s</text>
+<text x="1387.5" y="543.2" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">fall 3 · rise 2 · stats :8404</text>
+<text x="1387.5" y="557.8000000000001" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">Oracle ↔ AWS · failover automático</text>
+<text x="1387.5" y="572.4000000000001" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">Vercel queda como backup lógico</text>
+<text x="1387.5" y="587.0000000000001" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">HTTPS al backend AWS (verify none)</text>
+<rect x="1550" y="470" width="285" height="145" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<text x="1692.5" y="494" text-anchor="middle" font-size="13.0" font-weight="700" fill="#5b21b6">plomaap_api (Docker)</text>
+<text x="1692.5" y="514" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">imagen plomaap-api:latest</text>
+<text x="1692.5" y="528.6" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">Gunicorn :8000 · 3 workers · timeout 120 s</text>
+<text x="1692.5" y="543.2" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">Python 3.12-slim · build local</text>
+<text x="1692.5" y="557.8000000000001" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">volumes ./uploads y ./media</text>
+<text x="1692.5" y="572.4000000000001" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">redes plomaap_plomaap_net +</text>
+<text x="1692.5" y="587.0000000000001" text-anchor="middle" font-size="9.2" fill="#5b21b6" opacity="0.92">lifeos_lifeos_net (externa)</text>
+<rect x="1245" y="630" width="285" height="70" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="1387.5" y="654" text-anchor="middle" font-size="12.6" font-weight="700" fill="#5b21b6">plomaap_db (respaldo)</text>
+<text x="1387.5" y="674" text-anchor="middle" font-size="9.0" fill="#5b21b6" opacity="0.92">pgvector/pgvector:pg17 · volumen</text>
+<text x="1387.5" y="687.6" text-anchor="middle" font-size="9.0" fill="#5b21b6" opacity="0.92">ya no se usa: Oracle apunta a Neon</text>
+<rect x="1550" y="630" width="285" height="70" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+<text x="1692.5" y="654" text-anchor="middle" font-size="12.6" font-weight="700" fill="#5b21b6">Redes y persistencia Docker</text>
+<text x="1692.5" y="674" text-anchor="middle" font-size="9.0" fill="#5b21b6" opacity="0.92">plomaap_plomaap_net · lifeos_lifeos_net</text>
+<text x="1692.5" y="687.6" text-anchor="middle" font-size="9.0" fill="#5b21b6" opacity="0.92">bind mounts uploads/ y media/</text>
+<text x="1540" y="741" text-anchor="middle" font-size="9.8" fill="#5b21b6">SSH 22 (lifeos.key) · /home/ubuntu/plomaap · docker compose</text>
+<rect x="65" y="860" width="570" height="230" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+<text x="350.0" y="884" text-anchor="middle" font-size="15.5" font-weight="700" fill="#14532d">Neon PostgreSQL 18.6 + pgvector 0.8.6</text>
+<text x="350.0" y="904" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">Proyecto my-first-project · rama production · BD neondb · región us-east-2</text>
+<text x="350.0" y="919.2" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">Host directo: ep-restless-lab-bdv0vp50.c-8.us-east-2.aws.neon.tech</text>
+<text x="350.0" y="934.4000000000001" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">Host pooler: ep-restless-lab-bdv0vp50-pooler... (Vercel)</text>
+<text x="350.0" y="949.6000000000001" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">TLS/SSL obligatorio (sslmode=require) · psycopg2 · CONN_MAX_AGE=60</text>
+<text x="350.0" y="964.8000000000002" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">18 tablas de dominio: users · technician_profiles · services · user_addresses</text>
+<text x="350.0" y="980.0000000000002" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">appointments · devices · webauthn_credentials · user_favorites</text>
+<text x="350.0" y="995.2000000000003" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">app_events · recommendation_events · room_type_catalog</text>
+<text x="350.0" y="1010.4000000000003" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">asset_type_catalog · homes · home_members · home_rooms</text>
+<text x="350.0" y="1025.6000000000004" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">home_assets · profile_attributes · entity_embeddings</text>
+<text x="350.0" y="1040.8000000000004" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">entity_embeddings.embedding vector(512) + índice HNSW</text>
+<text x="350.0" y="1056.0000000000005" text-anchor="middle" font-size="9.1" fill="#14532d" opacity="0.92">Backups y branching gestionados por Neon</text>
+<rect x="710" y="860" width="225" height="100" rx="10" fill="#ffffff" stroke="#ca8a04" stroke-width="2"/>
+<text x="822.5" y="884" text-anchor="middle" font-size="13.2" font-weight="700" fill="#713f12">Cloudinary</text>
+<text x="822.5" y="904" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">cloud dxoejokli · preset plomaap</text>
+<text x="822.5" y="918.2" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">avatares y fotos de registro</text>
+<text x="822.5" y="932.4000000000001" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">subida directa desde la SPA</text>
+<rect x="960" y="860" width="225" height="100" rx="10" fill="#ffffff" stroke="#ca8a04" stroke-width="2"/>
+<text x="1072.5" y="884" text-anchor="middle" font-size="13.2" font-weight="700" fill="#713f12">Zoho Mail · SMTP</text>
+<text x="1072.5" y="904" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">smtp.zoho.com:465 SSL</text>
+<text x="1072.5" y="918.2" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">verificación y reset de clave</text>
+<text x="1072.5" y="932.4000000000001" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">hilo daemon · fallo solo se loguea</text>
+<rect x="1210" y="860" width="225" height="100" rx="10" fill="#ffffff" stroke="#ca8a04" stroke-width="2"/>
+<text x="1322.5" y="884" text-anchor="middle" font-size="13.2" font-weight="700" fill="#713f12">Google Gemini API</text>
+<text x="1322.5" y="904" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">generativelanguage v1beta</text>
+<text x="1322.5" y="918.2" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">gemini-3.6-flash → 3.5-flash-lite</text>
+<text x="1322.5" y="932.4000000000001" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">NLU /api/intelligence/understand</text>
+<rect x="710" y="975" width="225" height="100" rx="10" fill="#ffffff" stroke="#ca8a04" stroke-width="2"/>
+<text x="822.5" y="999" text-anchor="middle" font-size="13.2" font-weight="700" fill="#713f12">Voyage AI</text>
+<text x="822.5" y="1019" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">api.voyageai.com/v1/embeddings</text>
+<text x="822.5" y="1033.2" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">voyage-3-lite · 512 dimensiones</text>
+<text x="822.5" y="1047.4" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">fallback local-hash-512</text>
+<rect x="960" y="975" width="225" height="100" rx="10" fill="#ffffff" stroke="#ca8a04" stroke-width="2"/>
+<text x="1072.5" y="999" text-anchor="middle" font-size="13.2" font-weight="700" fill="#713f12">Google Identity</text>
+<text x="1072.5" y="1019" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">OAuth 2.0 · ID token</text>
+<text x="1072.5" y="1033.2" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">cliente web + cliente Android</text>
+<text x="1072.5" y="1047.4" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">backend valida «aud»</text>
+<rect x="1210" y="975" width="225" height="100" rx="10" fill="#ffffff" stroke="#ca8a04" stroke-width="2"/>
+<text x="1322.5" y="999" text-anchor="middle" font-size="13.2" font-weight="700" fill="#713f12">Nominatim / Unsplash</text>
+<text x="1322.5" y="1019" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">geocodificación OSM desde la SPA</text>
+<text x="1322.5" y="1033.2" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">imágenes preset de servicios</text>
+<text x="1322.5" y="1047.4" text-anchor="middle" font-size="9.2" fill="#713f12" opacity="0.92">consumo HTTPS del navegador</text>
+<rect x="1505" y="860" width="350" height="230" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<text x="1680.0" y="884" text-anchor="middle" font-size="14.0" font-weight="700" fill="#334155">Almacenamiento y respaldos</text>
+<text x="1680.0" y="904" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">AWS: /opt/plomaap/backend/static/</text>
+<text x="1680.0" y="919.4" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">  uploads/evidence (disco 20 GB gp3)</text>
+<text x="1680.0" y="934.8" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">Oracle: ./uploads/ y ./media/</text>
+<text x="1680.0" y="950.1999999999999" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">  bind mounts + volumen pgvector</text>
+<text x="1680.0" y="965.5999999999999" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">Vercel: /tmp efímero · sin persistencia</text>
+<text x="1680.0" y="980.9999999999999" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">Local: backups/*.dump (pg_dump -Fc)</text>
+<text x="1680.0" y="996.3999999999999" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">  backups/ está en .gitignore</text>
+<text x="1680.0" y="1011.7999999999998" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">Neon: backups + branching gestionados</text>
+<text x="1680.0" y="1027.1999999999998" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">Evidencias: solo AWS/Oracle</text>
+<text x="1680.0" y="1042.6" text-anchor="middle" font-size="9.6" fill="#334155" opacity="0.92">Avatares: Cloudinary (no disco)</text>
+<rect x="65" y="1190" width="430" height="265" rx="10" fill="#ffffff" stroke="#0891b2" stroke-width="2"/>
+<text x="280.0" y="1214" text-anchor="middle" font-size="14.0" font-weight="700" fill="#164e63">Estación de desarrollo (Windows)</text>
+<text x="280.0" y="1234" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">Python 3.12 · venv · Django 6.1.2</text>
+<text x="280.0" y="1250.6" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">requirements.txt / requirements-dev.txt</text>
+<text x="280.0" y="1267.1999999999998" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">Docker Desktop: plomapp-postgres-pgvector</text>
+<text x="280.0" y="1283.7999999999997" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">PostgreSQL 17 + pgvector :5434 (activo)</text>
+<text x="280.0" y="1300.3999999999996" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">PostgreSQL 17 nativo :5432 (respaldo)</text>
+<text x="280.0" y="1316.9999999999995" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">MySQL 8.4 y SQLite (fallback / tests)</text>
+<text x="280.0" y="1333.5999999999995" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">runserver 0.0.0.0:5000 · .env local</text>
+<text x="280.0" y="1350.1999999999994" text-anchor="middle" font-size="9.8" fill="#164e63" opacity="0.92">pytest · coverage · scripts/verificar_todo.py</text>
+<rect x="520" y="1190" width="680" height="265" rx="10" fill="#ffffff" stroke="#db2777" stroke-width="2"/>
+<text x="860.0" y="1214" text-anchor="middle" font-size="14.2" font-weight="700" fill="#831843">GitHub · Ricy24/plomaap_django + GitHub Actions</text>
+<text x="860.0" y="1234" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">Ramas main / dev_Andres · PR a main · CODEOWNERS</text>
+<text x="860.0" y="1250.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">Workflow «Pruebas»: push, pull_request y workflow_dispatch</text>
+<text x="860.0" y="1266.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">1 calidad: compileall · ruff · duplicados · contrato · bandit</text>
+<text x="860.0" y="1282.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">2 unit-sqlite: pytest -m unit sobre SQLite en memoria</text>
+<text x="860.0" y="1298.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">3 unit-postgres: service pgvector/pgvector:pg17</text>
+<text x="860.0" y="1314.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">4 unit-mysql: service mysql:8.4</text>
+<text x="860.0" y="1330.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">5 integration-postgres: API + pgvector + uploads/jsonb</text>
+<text x="860.0" y="1346.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">6 mutación: scripts/mutar_entrega.py --todo</text>
+<text x="860.0" y="1362.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">7 informe: XLSX artifact + commit en main [skip ci]</text>
+<text x="860.0" y="1378.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">8 required: gate obligatorio · cobertura 100 % (utils/services)</text>
+<text x="860.0" y="1394.0" text-anchor="middle" font-size="9.3" fill="#831843" opacity="0.92">CD: manual, no hay despliegue automático desde Actions</text>
+<rect x="1230" y="1190" width="620" height="265" rx="10" fill="#ffffff" stroke="#db2777" stroke-width="2"/>
+<text x="1540.0" y="1214" text-anchor="middle" font-size="14.2" font-weight="700" fill="#831843">Operación y despliegue (manual)</text>
+<text x="1540.0" y="1234" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">Vercel: npx vercel --prod --yes (frontend y backend)</text>
+<text x="1540.0" y="1250.6" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">AWS: git pull · systemctl restart plomaap plomaap2</text>
+<text x="1540.0" y="1267.1999999999998" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">Oracle: git pull · docker compose build api · up -d api</text>
+<text x="1540.0" y="1283.7999999999997" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">HAProxy: editar haproxy.cfg · docker restart plomaap_haproxy</text>
+<text x="1540.0" y="1300.3999999999996" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">Migraciones: manage.py migrate · seed_services/admin/technicians/catalogs</text>
+<text x="1540.0" y="1316.9999999999995" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">Respaldos: pg_dump -Fc · pg_restore</text>
+<text x="1540.0" y="1333.5999999999995" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">Salud: /api/health · HAProxy /stats (basic auth)</text>
+<text x="1540.0" y="1350.1999999999994" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">SSH: plomaap_aws.pem (AWS) · lifeos.key (Oracle)</text>
+<text x="1540.0" y="1366.7999999999993" text-anchor="middle" font-size="9.6" fill="#831843" opacity="0.92">⚠ Redis pendiente: rate limit y challenges WebAuthn por instancia</text>
+<polyline points="220,205 220,240 290,240 290,295" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_0f172a)"/>
+<polyline points="395,205 540,240 540,500 515,500" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_0f172a)"/>
+<polyline points="300,205 300,235 760,235 760,355" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_0f172a)"/>
+<polyline points="330,205 330,245 1400,245 1400,350" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_0f172a)"/>
+  <marker id="arr_7c3aed" markerWidth="11" markerHeight="11" refX="9" refY="3.5"
+          orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L0,7 L10,3.5 z" fill="#7c3aed"/>
+  </marker>
+<polyline points="385,160 385,88 1220,88 1220,130" fill="none" stroke="#7c3aed" stroke-width="2.2" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_7c3aed)"/>
+  <marker id="arr_ca8a04" markerWidth="11" markerHeight="11" refX="9" refY="3.5"
+          orient="auto" markerUnits="strokeWidth">
+    <path d="M0,0 L0,7 L10,3.5 z" fill="#ca8a04"/>
+  </marker>
+<polyline points="65,190 25,190 25,795 700,795 700,880 710,880" fill="none" stroke="#ca8a04" stroke-width="2.2" stroke-dasharray="5 4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ca8a04)"/>
+<polyline points="290,705 290,860" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_16a34a)"/>
+<polyline points="515,605 550,605 550,798 690,798 690,860 710,860" fill="none" stroke="#ca8a04" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ca8a04)"/>
+<polyline points="920,790 920,812 620,812 620,860" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_16a34a)"/>
+<polyline points="1100,790 1100,860" fill="none" stroke="#ca8a04" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ca8a04)"/>
+<polyline points="1700,790 1700,818 640,818 640,860" fill="none" stroke="#16a34a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_16a34a)"/>
+<polyline points="1800,790 1800,820 1430,820 1430,860" fill="none" stroke="#ca8a04" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ca8a04)"/>
+<polyline points="1245,530 1145,530" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ea580c)"/>
+<polyline points="1530,540 1550,540" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ea580c)"/>
+<polyline points="1387,455 1387,470" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ea580c)"/>
+<polyline points="1692,455 1692,470" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_ea580c)"/>
+<polyline points="495,1300 520,1300" fill="none" stroke="#0f172a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_0f172a)"/>
+<polyline points="1200,1300 1230,1300" fill="none" stroke="#db2777" stroke-width="2.2" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_db2777)"/>
+<polyline points="700,1190 700,1160 675,1160 675,802 310,802 310,790" fill="none" stroke="#db2777" stroke-width="2.2" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_db2777)"/>
+<polyline points="675,802 900,802 900,790" fill="none" stroke="#db2777" stroke-width="2.2" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_db2777)"/>
+<polyline points="675,802 1300,802 1300,790" fill="none" stroke="#db2777" stroke-width="2.2" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round" marker-end="url(#arr_db2777)"/>
+<rect x="206.992" y="277.4" width="96.016" height="16.6" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="255" y="286" text-anchor="middle" font-size="9.6" font-weight="600" fill="#0f172a">carga SPA/assets</text>
+<rect x="524" y="330.4" width="20" height="99.2" rx="4" fill="#ffffff" opacity="0.9"/>
+<text x="532" y="380" text-anchor="middle" font-size="9.6" font-weight="600" fill="#0f172a" transform="rotate(-90 532 380)">fetch JSON + JWT</text>
+<rect x="545.864" y="217.4" width="128.272" height="16.6" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="610" y="226" text-anchor="middle" font-size="9.6" font-weight="600" fill="#0f172a">HTTPS 443 · HTTP :5000</text>
+<rect x="865.544" y="229.4" width="208.912" height="16.6" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="970" y="238" text-anchor="middle" font-size="9.6" font-weight="600" fill="#0f172a">HTTPS /plomaap-api (directo o vía LB)</text>
+<rect x="941.24" y="73.4" width="117.52000000000001" height="16.6" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="1000" y="82" text-anchor="middle" font-size="9.6" font-weight="600" fill="#7c3aed">OAuth 2.0 / ID token</text>
+<rect x="299.8" y="778.4" width="144.4" height="16.6" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="372" y="787" text-anchor="middle" font-size="9.6" font-weight="600" fill="#ca8a04">subida directa Cloudinary</text>
+<rect x="300" y="781.4" width="122.896" height="16.6" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="300" y="790" text-anchor="start" font-size="9.6" font-weight="600" fill="#16a34a">psycopg2 SSL · pooler</text>
+<rect x="551.992" y="826.4" width="96.016" height="16.6" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="600" y="835" text-anchor="middle" font-size="9.6" font-weight="600" fill="#ca8a04">HTTPS 443 → SaaS</text>
+<rect x="1164.816" y="537.8" width="56.368" height="16.2" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="1193" y="546" text-anchor="middle" font-size="9.2" font-weight="600" fill="#ea580c">HTTPS 443</text>
+<rect x="469.968" y="1280.2" width="74.06400000000001" height="15.8" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="507" y="1288" text-anchor="middle" font-size="8.8" font-weight="600" fill="#0f172a">git push / PR</text>
+<rect x="1200.144" y="1280.2" width="29.712000000000003" height="15.8" rx="4" fill="#ffffff" opacity="0.88"/>
+<text x="1215" y="1288" text-anchor="middle" font-size="8.8" font-weight="600" fill="#db2777">gate</text>
+</svg>

@@ -36,42 +36,12 @@ base de datos Neon (PostgreSQL + pgvector):
 
 ### Arquitectura
 
-![Diagrama de arquitectura](docs/despliegue/arquitectura.svg)
+![Diagrama de despliegue completo — PlomApp](docs/despliegue/diagrama_despliegue.svg)
 
-```mermaid
-flowchart TD
-    Browser["🌐 Navegador"]
-    VCDN["Vercel CDN<br/>Frontend React (Vite)"]
-    VS["Vercel Serverless<br/>Django WSGI"]
-    AWS["AWS EC2 t3.micro<br/>nginx round-robin"]
-    G1["Gunicorn :8000"]
-    G2["Gunicorn :8001"]
-    NEON["Neon PostgreSQL 18.6<br/>+ pgvector"]
-    CLD["Cloudinary (fotos/avatares)"]
-
-    Browser -->|fetch JSON+JWT| VCDN
-    VCDN --> VS
-    VS -->|psycopg2 SSL| NEON
-    Browser -->|HTTPS| AWS
-    AWS --> G1
-    AWS --> G2
-    G1 -->|psycopg2 SSL| NEON
-    G2 -->|psycopg2 SSL| NEON
-    Browser -->|HTTPS /plomaap-api| ORACLE["Oracle Cloud VPS<br/>Docker + Caddy"]
-    ORACLE --> OAPI["plomaap_api<br/>Gunicorn :8000"]
-    ORACLE --> ODB["plomaap_db<br/>pgvector pg17"]
-    OAPI --> ODB
-    Browser -->|HTTPS (LB global)| GLB["HAProxy (Oracle)<br/>round-robin + health checks"]
-    GLB --> OAPI
-    GLB --> AWS
-    Browser -.->|subida directa| CLD
-
-    style VCDN fill:#e0f2fe,stroke:#0284c7
-    style VS fill:#dbeafe,stroke:#2563eb
-    style AWS fill:#ffedd5,stroke:#ea580c
-    style NEON fill:#dcfce7,stroke:#16a34a
-    style CLD fill:#fef9c3,stroke:#ca8a04
-```
+> Diagrama completo con **Vercel, AWS, Oracle, HAProxy, Neon, SaaS y CI/CD**.
+> La fuente editable está en [`diagrama_despliegue.mmd`](docs/despliegue/diagrama_despliegue.mmd)
+> y el detalle (nodos, puertos, flujos y riesgos) en
+> [`DIAGRAMA_DESPLIEGUE.md`](docs/despliegue/DIAGRAMA_DESPLIEGUE.md).
 
 ### ⚖️ Balanceador de carga (load balancer)
 
@@ -142,6 +112,7 @@ npx vercel --prod --yes
 ## Documentación de despliegue
 
 - [`docs/despliegue/DESPLIEGUE_COMPLETO.md`](docs/despliegue/DESPLIEGUE_COMPLETO.md): guía completa del despliegue en **AWS + Neon + Vercel** (arquitectura, comandos, archivos, configuraciones y solución de problemas).
+- [`docs/despliegue/DIAGRAMA_DESPLIEGUE.md`](docs/despliegue/DIAGRAMA_DESPLIEGUE.md): **diagrama de despliegue completo** (Vercel, AWS, Oracle, HAProxy, Neon, SaaS, CI/CD) con inventario de nodos, puertos, flujos y riesgos; incluye [`diagrama_despliegue.svg`](docs/despliegue/diagrama_despliegue.svg) y [`diagrama_despliegue.mmd`](docs/despliegue/diagrama_despliegue.mmd).
 - [`docs/despliegue/aws/`](docs/despliegue/aws/): copias de nginx, systemd y script de referencia.
 - [`docs/despliegue/vercel/`](docs/despliegue/vercel/): `index.py`, `vercel.json` y variables de entorno usadas en Vercel.
 
