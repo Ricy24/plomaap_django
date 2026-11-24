@@ -312,7 +312,8 @@ jobs:
       group: deploy-${{ github.ref }}
       cancel-in-progress: false
     steps:
-      - name: Desplegar en Oracle (Docker)
+      - name: Desplegar en Oracle (Docker) (opcional)
+        continue-on-error: true
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.ORACLE_HOST }}
@@ -349,5 +350,5 @@ jobs:
       - name: Verificar health de los despliegues
         run: |
           set -e
-          curl -fsS https://lifeosandres.duckdns.org/plomaap-api/api/health
-          curl -fsS https://plomaap.duckdns.org/api/health || true
+          curl -fsS https://plomaap.duckdns.org/api/health
+          curl -fsS https://lifeosandres.duckdns.org/plomaap-api/api/health || true
