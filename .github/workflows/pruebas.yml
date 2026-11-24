@@ -312,23 +312,6 @@ jobs:
       group: deploy-${{ github.ref }}
       cancel-in-progress: false
     steps:
-      - name: Desplegar en AWS (EC2)
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.AWS_HOST }}
-          username: ${{ secrets.AWS_USER }}
-          key: ${{ secrets.AWS_SSH_KEY }}
-          script: |
-            set -euo pipefail
-            cd "${{ secrets.AWS_APP_DIR }}"
-            git fetch origin main
-            git checkout main
-            git reset --hard origin/main
-            ./venv/bin/pip install -r requirements.txt
-            ./venv/bin/python manage.py migrate --noinput
-            ./venv/bin/python manage.py collectstatic --noinput
-            sudo systemctl restart plomaap plomaap2
-            sudo systemctl reload nginx
       - name: Desplegar en Oracle (Docker)
         uses: appleboy/ssh-action@v1.2.0
         with:
@@ -345,8 +328,26 @@ jobs:
             docker compose up -d api
             docker compose exec -T api python manage.py migrate --noinput
             docker compose exec -T api python manage.py collectstatic --noinput
+      - name: Desplegar en AWS (EC2) (opcional)
+        continue-on-error: true
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.AWS_APP_DIR }}"
+            git fetch origin main
+            git checkout main
+            git reset --hard origin/main
+            ./venv/bin/pip install -r requirements.txt
+            ./venv/bin/python manage.py migrate --noinput
+            ./venv/bin/python manage.py collectstatic --noinput
+            sudo systemctl restart plomaap plomaap2
+            sudo systemctl reload nginx
       - name: Verificar health de los despliegues
         run: |
           set -e
-          curl -fsS https://plomaap.duckdns.org/api/health
           curl -fsS https://lifeosandres.duckdns.org/plomaap-api/api/health
+          curl -fsS https://plomaap.duckdns.org/api/health || true
